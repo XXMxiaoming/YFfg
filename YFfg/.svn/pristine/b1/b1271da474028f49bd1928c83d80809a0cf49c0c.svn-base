@@ -1,0 +1,15 @@
+package com.yfwl.yfgp.service;
+
+import java.util.List;
+
+import com.yfwl.yfgp.model.Yhzhsend;
+
+public interface YhzhsendService {
+	Integer insertYhzhsend(Yhzhsend yhzhsend);
+
+	Integer updateYhzhsend(Yhzhsend yhzhsend);
+
+	List<Yhzhsend> selectYhzhsend(int userid);
+	
+	Integer updateYhzhsendStatus(int userid);
+}

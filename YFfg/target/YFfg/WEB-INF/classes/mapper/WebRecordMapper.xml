@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.WebRecordMapper">
+
+	<resultMap  id="BaseResultMap" type="WebRecord">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="user_id" jdbcType="INTEGER" />
+		<result column="info" property="info" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="count" property="count" jdbcType="INTEGER" />
+		<result column="created_at" property="created_at" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updated_at" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="INTEGER" />		
+	</resultMap>
+	
+	<insert id="initWebRecord" parameterType="WebRecord">
+	insert into yfgp_web_records (user_id, info, type,count, created_at, status) values (#{user_id}, #{info},#{type},#{count}, now(), #{status})
+	<selectKey resultType="Integer" keyProperty="id" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+	
+	<update id="updateWebRecord" parameterType="WebRecord">
+	update yfgp_web_records set count = #{count}, updated_at = now(), status = #{status}
+	where user_id = #{userId}
+	</update>
+	
+	<select id="getWebRecord" parameterType="WebRecord" resultMap="BaseResultMap">
+	select * from yfgp_web_records where user_id = #{user_id} and type=#{type} and date(created_at) = curdate();
+	</select>
+
+	
+</mapper>

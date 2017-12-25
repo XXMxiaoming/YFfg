@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.AccountsMapper">
+
+	<resultMap  id="BaseResultMap" type="Accounts">
+		<id column="gid" property="gid" jdbcType="INTEGER" />
+		<result column="userid" property="userid" jdbcType="INTEGER" />
+		<result column="gname" property="gname" jdbcType="VARCHAR" />
+		<result column="total" property="total" jdbcType="DECIMAL" />
+		<result column="stock" property="stock" jdbcType="DECIMAL" />
+		<result column="available" property="available" jdbcType="DECIMAL" />
+		<result column="frozen" property="frozen" jdbcType="DECIMAL" />
+		<result column="gznum" property="gznum" jdbcType="INTEGER" />
+		<result column="gtnum" property="gtnum" jdbcType="INTEGER" />
+		<result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+		<result column="raisetime" property="raisetime" jdbcType="TIMESTAMP" />
+		<result column="endtime" property="endtime" jdbcType="TIMESTAMP" />
+		<result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+		<result column="del" property="del" jdbcType="INTEGER" />
+		<result column="deltime" property="deltime" jdbcType="TIMESTAMP" />
+		<result column="info" property="info" jdbcType="VARCHAR" />
+		<result column="attr" property="attr" jdbcType="INTEGER" />
+		<result column="optigid" property="optigid" jdbcType="INTEGER" />
+		<result column="init" property="init" jdbcType="DECIMAL" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="rank" property="rank" jdbcType="DECIMAL" />
+		<result column="cite_id" property="cite_id" jdbcType="INTEGER" />
+	</resultMap>
+	
+	
+	
+	<select id="getAccounts" parameterType="Accounts" resultMap="BaseResultMap">
+	select * from accounts where gid = #{gid};
+	</select>
+	
+	<select id="getOptiAccountsList" parameterType="Accounts" resultMap="BaseResultMap">
+	select * from accounts where userid = #{userid} and attr = '6' and del='0' order by gid desc;
+	</select>
+	
+	<select id="getAllAccountsList" resultMap="BaseResultMap">
+	select * from accounts where del='0';
+	</select>
+	
+	<select id="getAccountsList" parameterType="Accounts" resultMap="BaseResultMap">
+	select * from accounts where (userid = #{userid} or gname = #{gname}) and del = '0';
+	</select>
+	
+	<insert id="initAccounts" parameterType="Accounts">
+	insert into accounts (userid, gname, total, stock, available, createtime,raisetime,endtime,info,attr, optigid, init,cite_id)
+	values(#{userid}, #{gname}, #{total}, #{stock}, #{available}, #{createtime},#{raisetime},#{endtime}, #{info},#{attr}, #{optigid} ,#{init},#{cite_id})
+	<selectKey resultType="Integer" keyProperty="gid" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+	
+	<update id="updateAccounts" parameterType="Accounts">
+	update accounts set
+	gname=#{gname},total=#{total},stock=#{stock},available=#{available},frozen=#{frozen},gznum=#{gznum},gtnum=#{gtnum},updatetime=#{updatetime},del=#{del},attr=#{attr},optigid=#{optigid},deltime=#{deltime},info=#{info},rank=#{rank} 
+	where gid=#{gid}
+	</update>
+	
+	<select id="searchAccounts" parameterType="Accounts" resultMap="BaseResultMap">
+	select * from accounts where gname like '%${gname}%' and del = '0' and  (attr = '6' or attr ='1' or attr='7') limit 0,10;
+	</select>
+	<!-- 2016-09-22 -->
+	<select id="searchAccountsByName" parameterType="String" resultMap="BaseResultMap">
+	select * from accounts where gname = #{gname} and del = '0'
+	</select>
+	
+	<select id="getAllOptiedAccountsList"  resultMap="BaseResultMap">
+	select * from accounts where (attr = '6' OR attr = '14') and del='0';
+	</select>
+	
+	<select id="getAllRaiseAccountsList" resultMap="BaseResultMap">
+	select * from accounts where  attr = '7' and del='0' and raisetime > now();
+	</select>
+	
+	<select id="getFreeAccountsList" parameterType="Accounts" resultMap="BaseResultMap">
+	select * from accounts where userid = #{userid} and del = '0' and (attr='1' or attr='6' or attr='5' or attr='12');
+	</select>
+	
+	<select id="getRaiseAccountsList" parameterType="Accounts" resultMap="BaseResultMap">
+	select * from accounts where userid = #{userid} and (del = '0' or del='2' or del='3' or del='4') and attr='7'; 
+	</select>
+	
+	<select id="getLeftRaiseAccountsList" resultMap="BaseResultMap">
+	select * from accounts where  attr = '7' and del='0' and raisetime > now() order by createtime desc limit 0,#{left};
+	</select>
+	
+	<select id="getAllRunAccountsList" resultMap="BaseResultMap">
+	select * from accounts where  attr = '7' and del='0' and now() > raisetime and endtime > now();
+	</select>
+	
+	<update id="updateSpreadAccounts" parameterType="Accounts">
+	update accounts set status='1' where gid=#{gid}
+	</update>
+	
+	<select id="getPublishAccountsList" resultMap="BaseResultMap">
+	select * from accounts where  attr = '7' and del='0' and status='1';
+	</select>
+	
+	<select id="getPublishRaiseAccountsList" resultMap="BaseResultMap">
+	select * from accounts where  attr = '7' and del='0' and status='1' and raisetime > now();
+	</select>
+	
+	<select id="getHistoryAccountsList" resultMap="BaseResultMap">
+	select * from accounts where  attr = '7' and del>'0' and status='1';
+	</select>
+	
+	<select id="getAllPreList" resultMap="BaseResultMap">
+	select * from accounts where  attr = '7' and del='0' and deltime > now();
+	</select>
+	
+	<select id="getAccountsRank" parameterType="Accounts" resultType="Integer">
+	select count(*) from accounts where #{total}/#{init} > total/init and  attr in ('1','5','6') and del='0'
+	</select>
+	
+	<select id="getAllFreeAccounts" resultMap="BaseResultMap">
+	select * from accounts where attr in ('1','5','6') and del='0'
+	</select>
+	
+	<select id="joinAccountsCount" parameterType="Accounts" resultType="Integer">
+	select count(*) from accounts where userid=#{userid} and cite_id=#{cite_id} and del='0';
+	</select>
+	
+	
+	<select id="userJoinContestAccounts" parameterType="Integer" resultMap="BaseResultMap">
+	select * from accounts where userid=#{userid} and attr='8' and del='0';
+	</select>
+	
+	<select id="userContestAccounts" parameterType="Accounts" resultMap="BaseResultMap">
+	select * from accounts where userid=#{userid} and cite_id=#{cite_id} and del='0' limit 1;
+	</select>
+	
+	<select id="getAllWebAccounts" resultMap="BaseResultMap">
+	select * from accounts where attr='8' and del='0'
+	</select>
+	
+	<select id="getUserAdvanceAccounts" parameterType="Accounts" resultMap="BaseResultMap">
+	select * from accounts where userid=#{userid} and attr='9' and del='0'
+	</select>
+	
+	<select id="getAllAdvanceAccounts" resultMap="BaseResultMap">
+	select * from accounts where attr='9' or attr='12'
+	</select>
+	
+	<select id="get15Accounts" parameterType="Accounts" resultMap="BaseResultMap">
+	select * from accounts where attr=#{attr} and userid = #{userid} and del='0'
+	</select>
+	
+	<select id="getAccByOptiGid" parameterType="Accounts" resultMap="BaseResultMap">
+	select * from accounts where optigid = #{optigid} and userid = #{userid}
+	</select>
+	
+	<select id="getAccountsExist" parameterType="Integer" resultMap="BaseResultMap">
+	select * from accounts where userid=#{userid} limit 1 
+	</select>
+	
+	<select id="getAccountsByUserid" parameterType="Integer" resultMap="BaseResultMap">
+	select * from accounts where userid=#{userid}
+	</select>
+	
+</mapper>

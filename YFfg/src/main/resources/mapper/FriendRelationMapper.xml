@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.yfwl.yfgp.dao.FriendRelationMapper">
+
+	<resultMap type="FriendRelation" id="BaseResultMap">
+		<id column="relation_id" property="relationId" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="INTEGER"/>
+		<result column="friend_id" property="friendId" jdbcType="INTEGER"/>
+		<result column="add_time" property="addTime" jdbcType="TIMESTAMP"/>
+		<result column="is_first" property="isFirst" jdbcType="VARCHAR"/>
+		<result column="is_disabled" property="isDisabled" jdbcType="VARCHAR"/>
+		
+	</resultMap>
+	
+	<!-- 检测是否第一次使用加好友功能 -->
+	<select id="checkIsFirst" parameterType="String" resultType="Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			yfgp_friend_relation
+		WHERE
+			user_id = (
+				SELECT
+					user_id
+				FROM
+					yfgp_user U
+				WHERE
+					U.user_name = #{loginName}
+				OR U.phone = #{loginName}
+			)	
+	</select>
+	
+	<!-- 添加好友（第一次添加对方） -->
+	<insert id="insertFriend" >
+		INSERT INTO yfgp_friend_relation (user_id, friend_id,add_time,is_first,is_disabled)
+		VALUES
+			(
+				(
+					SELECT
+						user_id
+					FROM
+						yfgp_user U
+					WHERE
+						U.user_name = #{loginName}
+					OR U.phone = #{loginName}
+				),
+				(
+					SELECT
+						user_id
+					FROM
+						yfgp_user U
+					WHERE
+						U.user_name = #{searchName}
+					OR U.phone = #{searchName}
+				),
+				SYSDATE(),
+				#{isFirst},
+				'N'
+			)		
+	</insert>
+	<!-- 之前添加过对方，但删除了（is_disabled为Y），现在重新添加 -->
+	<update id="insertFriendAgain" >
+		UPDATE
+		yfgp_friend_relation
+		SET	is_disabled = 'N'
+		WHERE
+			user_id = (
+				SELECT
+					user_id
+				FROM
+					yfgp_user U
+				WHERE
+					U.user_name = #{user}
+				OR U.phone = #{user}
+			)
+		AND friend_id = (
+			SELECT
+				user_id
+			FROM
+				yfgp_user U
+			WHERE
+				U.user_name = #{friend}
+			OR U.phone = #{friend}
+		)	
+	</update>
+	
+	<!-- 查询是否早已经为好友关系 -->
+	<select id="validateIsAddBefore"  resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+			yfgp_friend_relation
+		WHERE
+			user_id = (
+				SELECT
+					user_id
+				FROM
+					yfgp_user U
+				WHERE
+					U.user_name = #{loginName}
+				OR U.phone = #{loginName}
+			)
+		AND friend_id = (
+			SELECT
+				user_id
+			FROM
+				yfgp_user U
+			WHERE
+				U.user_name = #{searchName}
+			OR U.phone = #{searchName}
+		)
+		
+	</select>
+	
+	<!-- 删除好友 -->
+	<update id="deleteFriend"  >
+		UPDATE
+		yfgp_friend_relation
+		SET	is_disabled = 'Y'
+		WHERE
+			user_id = (
+				SELECT
+					user_id
+				FROM
+					yfgp_user U
+				WHERE
+					U.user_name = #{user}
+				OR U.phone = #{user}
+			)
+		AND friend_id = (
+			SELECT
+				user_id
+			FROM
+				yfgp_user U
+			WHERE
+				U.user_name = #{friend}
+			OR U.phone = #{friend}
+		)		
+	</update>
+	
+	
+</mapper>

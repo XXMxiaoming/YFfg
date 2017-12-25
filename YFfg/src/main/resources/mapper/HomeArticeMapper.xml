@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.HomeArticleMapper">
+
+	<resultMap type="HomeArticle" id="BaseResultMap">
+		<id column="home_id" property="homeId" jdbcType="INTEGER" />
+		<result column="article_id" property="articleId" jdbcType="INTEGER"/>
+		<result column="sequence" property="sequence" jdbcType="VARCHAR"/>
+		<result column="type" property="type" jdbcType="VARCHAR"/>
+		<result column="scan_count" property="scanCount" jdbcType="INTEGER"/>
+		
+	</resultMap>
+	
+	<!-- 查找 HomeArticle-->
+	<select id="selectHomeArticle" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT * FROM yfgp_home_article WHERE sequence = #{sequence}
+	</select>
+	
+	<!-- 更新首页资讯阅读量 -->
+	<update id="updateScanCount" parameterType="Integer" >
+		UPDATE yfgp_home_article
+		SET scan_count = scan_count + (SELECT FLOOR(4+(RAND()*5)))
+		WHERE
+			home_id = #{homeId}		
+	</update>
+</mapper>

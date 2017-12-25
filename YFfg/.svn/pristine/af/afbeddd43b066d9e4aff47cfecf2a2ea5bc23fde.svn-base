@@ -1,0 +1,19 @@
+package com.yfwl.yfgp.service;
+
+import com.yfwl.yfgp.model.FuturesShares;
+
+public interface FuturesSharesService {
+	public Integer insertFuturesShares(FuturesShares futuresShares);
+	
+	/**
+	 *  获取云南白药的最后一条数据
+	 * @return
+	 */
+	
+	public FuturesShares getLastSameName();
+	/**
+	 * 获取国金证券的最后一条数据
+	 * @return
+	 */
+	public FuturesShares getLastSameName2();
+}

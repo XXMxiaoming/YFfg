@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.TraderecMapper">
+
+	<resultMap  id="BaseResultMap" type="Traderec">
+		<id column="rid" property="rid" jdbcType="INTEGER" />
+		<result column="gid" property="gid" jdbcType="INTEGER" />
+		<result column="stockid" property="stockid" jdbcType="VARCHAR" />
+		<result column="orderprice" property="orderprice" jdbcType="DECIMAL" />
+		<result column="tradeprice" property="tradeprice" jdbcType="DECIMAL" />
+		<result column="charge" property="charge" jdbcType="DECIMAL" />
+		<result column="stamp_tax" property="stamp_tax" jdbcType="DECIMAL" />
+		<result column="vol" property="vol" jdbcType="INTEGER" />
+		<result column="action" property="action" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="inserttime" property="inserttime" jdbcType="TIMESTAMP" />
+		<result column="tradetime" property="tradetime" jdbcType="TIMESTAMP" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="getTraderec" parameterType="Traderec" resultMap="BaseResultMap">
+	select * from traderec where rid = #{rid};
+	</select>
+	
+	<select id="getTraderecList" parameterType="Traderec" resultMap="BaseResultMap">
+	select traderec.*,stockinfo.name from traderec join stockinfo on traderec.stockid=stockinfo.stockid where traderec.gid = #{gid} order by rid desc;
+	</select>
+	<!-- 2016-9-20 交易查询增加分页 -->
+	<select id="getTraderecList2" resultMap="BaseResultMap">
+		SELECT
+			traderec.*, stockinfo. NAME
+		FROM
+			traderec
+		JOIN stockinfo ON traderec.stockid = stockinfo.stockid
+		WHERE
+			traderec.gid = #{gid}
+		ORDER BY
+			rid DESC
+		LIMIT #{pageCount},10;
+	</select>
+	
+	
+	<insert id="initTraderec" parameterType="Traderec">
+	insert into traderec (gid, stockid, orderprice,tradeprice,charge,stamp_tax, vol, action, status, inserttime, tradetime) 
+		values (#{gid},#{stockid},#{orderprice},#{tradeprice},#{charge},#{stamp_tax},#{vol},#{action},#{status},#{inserttime},#{tradetime})
+	<selectKey resultType="Integer" keyProperty="rid" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+	
+	<select id="getFirstTraderec" parameterType="Traderec" resultMap="BaseResultMap">
+	select traderec.*,stockinfo.name from traderec join stockinfo on traderec.stockid=stockinfo.stockid where traderec.gid = #{gid} and traderec.stockid=#{stockid} limit 1;
+	</select>
+	
+</mapper>

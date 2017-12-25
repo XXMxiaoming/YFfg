@@ -1,0 +1,81 @@
+package com.yfwl.yfgp.schedule;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.yfwl.yfgp.model.Revenue;
+import com.yfwl.yfgp.model.incomeLoss;
+import com.yfwl.yfgp.service.IncomeLossService;
+import com.yfwl.yfgp.service.RevenueService;
+import com.yfwl.yfgp.utils.AccountUtil;
+
+public class RevenueSchedule {
+	private static final double INIT_TOTAL = 1000000.f; // 设置初始金额
+	@Autowired
+	RevenueService revenueService;
+	@Autowired
+	IncomeLossService incomeLossService;
+
+	public void bindSchedule() {
+		re();
+	}
+
+	public void re() {
+		SimpleDateFormat dateSdf = new SimpleDateFormat("yyyyMMdd");
+		Date datenow = new Date();
+		String dateString = dateSdf.format(datenow);
+		Calendar cl = Calendar.getInstance();
+		cl.setTime(new Date());
+		int week = cl.get(Calendar.DAY_OF_WEEK) - 1;
+		if (!(week == 6 || week == 0 || AccountUtil.HOLIDAY_STRING
+				.contains(dateString))) {
+			List<Revenue> revenueList = revenueService.getAllRevenue();
+			if (!revenueList.isEmpty()) {
+				for (Revenue revenue : revenueList) {
+					Integer userid = revenue.getUserid();
+					incomeLoss in = incomeLossService.getincomeLoss(userid);
+					if(in==null){
+						
+					}else{
+						Double income = in.getIncome();
+						Double loss = in.getLoss();
+						Double ps = 0.2; // 股票
+						Double pf = 2 * loss; // 期货
+						Double pc = 0.1; // 现金
+						Double pd = 1 - ps - pf - pc; // 债券
+						if (pf > 0.7) {
+							continue;
+						} else {
+							
+							Double Ef = revenue.getEf();
+							Double Ed = revenue.getEd();
+							Double Es = revenue.getEs();
+							Double Ec = revenue.getEc();
+							Double Er =	revenue.getEr();
+							
+							Double f=INIT_TOTAL*pf*Ef;//期货收益金额
+							Double d=INIT_TOTAL*pd*Ed;//债券
+							Double s=INIT_TOTAL*ps*Es;//股票
+							Double c=INIT_TOTAL*pc*Ec;//现金
+							
+							Er =INIT_TOTAL+f+d+s+c;
+							revenue.setEr(Er);
+							revenueService.updateRevenue(revenue);
+						}
+					}
+				
+
+				}
+			} else {
+
+			}
+
+		} else {
+
+		}
+	}
+}

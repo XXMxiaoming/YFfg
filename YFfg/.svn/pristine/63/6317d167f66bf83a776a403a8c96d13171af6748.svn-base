@@ -1,0 +1,29 @@
+package com.yfwl.yfgp.model;
+
+public class IncomeLoss {
+Double income;
+Double loss;
+Integer userid;
+public Double getIncome() {
+	return income;
+}
+public void setIncome(Double income) {
+	this.income = income;
+}
+public Double getLoss() {
+	return loss;
+}
+public void setLoss(Double loss) {
+	this.loss = loss;
+}
+public Integer getUserid() {
+	return userid;
+}
+public void setUserid(Integer userid) {
+	this.userid = userid;
+}
+
+
+
+
+}

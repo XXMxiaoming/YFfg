@@ -1,0 +1,344 @@
+package com.yfwl.yfgp.controller;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.tencent.xinge.MessageIOS;
+import com.tencent.xinge.XingeApp;
+import com.yfwl.yfgp.model.Revenue;
+import com.yfwl.yfgp.model.User;
+import com.yfwl.yfgp.model.incomeLoss;
+import com.yfwl.yfgp.service.IncomeLossService;
+import com.yfwl.yfgp.service.RevenueService;
+
+@Controller
+@RequestMapping("/incomeLoss")
+public class IncomeLossController extends BaseController {
+	@Autowired
+	IncomeLossService incomeLossService;
+
+	@Autowired
+	RevenueService revenueService;
+
+	/**
+	 * @insertIncomeLoss添加一个收益亏损单
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/insertIncomeLoss", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> insertIncomeLoss(HttpServletRequest request,
+			HttpServletResponse response) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		Integer userid = Integer.parseInt(request.getParameter("userid"));
+		String token = request.getParameter("token");
+		// 预期收益，预期亏损
+		String inco = request.getParameter("income");
+		Double income = (double) Integer.parseInt(inco.substring(0,
+				inco.length() - 1)) / 100;
+		String lo = request.getParameter("loss");
+		Double loss = (double) (Integer.parseInt(lo.substring(0,
+				lo.length() - 1)) / 100);
+
+		if (validateToken(userid, token)) {
+			incomeLoss inlo = incomeLossService.getincomeLoss(userid);
+			if (inlo != null) {
+				map.put("msg", "您已经创建过此表单");
+				map.put("data", "");
+				map.put("status", 4);
+			} else {
+				incomeLoss inlo2 = new incomeLoss();
+				inlo2.setUserid(userid);
+				inlo2.setIncome(income);
+				inlo2.setLoss(loss);
+				incomeLossService.insertIncomeLoss(inlo2);
+				// revenueService.insertRevenue(userid);
+				map = rspFormat("", SUCCESS);
+			}
+
+		} else {
+
+			map = rspFormat("", WRONG_TOKEN);
+		}
+
+		return map;
+
+	}
+
+	@RequestMapping(value = "/deleteIncomeLoss", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> deleteIncomeLoss(HttpServletRequest request,
+			HttpServletResponse response) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		Integer userid = Integer.parseInt(request.getParameter("userid"));
+		String token = request.getParameter("token");
+		if (validateToken(userid, token)) {
+			incomeLoss inlo = incomeLossService.getincomeLoss(userid);
+			if (inlo == null) {
+				map.put("msg", "表单不存在");
+				map.put("data", "");
+				map.put("status", 4);
+			} else {
+				incomeLossService.deleteIncomeLoss(userid);
+				// revenueService.deleteRevenue(userid);
+				map = rspFormat("", SUCCESS);
+			}
+
+		} else {
+			map = rspFormat("", WRONG_TOKEN);
+		}
+		return map;
+	}
+
+	/**
+	 * 预期智能配置
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/expectIncomeLoss", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> expectIncomeLoss(HttpServletRequest request,
+			HttpServletResponse response) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<String> list = new ArrayList<String>();
+		List<String> list2 = new ArrayList<String>();
+		int j = 10;
+		for (int i = 1; i <= 10; i++) {
+			list.add(j + "%");
+			j += 10;
+		}
+		int k = 0;
+		for (int i = 0; i <= 6; i++) {
+			list2.add(k + "%");
+			k += 5;
+		}
+		map.put("income", list);
+		map.put("loss", list2);
+		return map;
+	}
+
+	/**
+	 * 查询智能配置
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+
+	@RequestMapping(value = "/getIncomeLoss", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> getIncomeLoss(HttpServletRequest request,
+			HttpServletResponse response) {
+		Map<String, Object> map = null;
+		Integer userid = Integer.parseInt(request.getParameter("userid"));
+		String token = request.getParameter("token");
+		if (validateToken(userid, token)) {
+			incomeLoss inlo = incomeLossService.getincomeLoss(userid);
+			List<Map<String, Object>> arr = new ArrayList<Map<String, Object>>();
+			if (inlo != null) {
+				Double income = inlo.getIncome();
+				Double loss = inlo.getLoss();
+				// 股票，债券，期货，现金所占比例
+				Double ps = 0.2; // 股票
+				Double pf = 2 * loss; // 期货
+				Double pc = 0.1; // 现金
+				Double pd = 1 - ps - pf - pc; // 债券
+				if (pf > 0.7) {
+					map = rspFormat("", FAIL);
+				} else {
+					map = new HashMap<String, Object>();
+					map.put("name", "股票");
+					map.put("scale", (int) (ps * 100) + "%");
+					arr.add(map);
+
+					map = new HashMap<String, Object>();
+					map.put("name", "债券");
+					map.put("scale", (int) (pd * 100) + "%");
+					arr.add(map);
+
+					map = new HashMap<String, Object>();
+					map.put("name", "期货");
+					map.put("scale", (int) (pf * 100) + "%");
+					arr.add(map);
+
+					map = new HashMap<String, Object>();
+					map.put("name", "现金");
+					map.put("scale", (int) (pc * 100) + "%");
+					arr.add(map);
+
+					map = rspFormat(arr, SUCCESS);
+				}
+
+			} else {
+				map.put("msg", "表单不存在");
+				map.put("data", "");
+				map.put("status", 4);
+			}
+		} else {
+			map.put("", WRONG_TOKEN);
+		}
+		return map;
+	}
+
+	/**
+	 * 添加或更新revenue表
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/revenue", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> revenue(HttpServletRequest request,
+			HttpServletResponse response) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		Integer userid = Integer.parseInt(request.getParameter("userid"));
+		String token = request.getParameter("token");
+		String EF = request.getParameter("Ef");
+		Double Ef = (double) Integer.parseInt(EF.substring(0, EF.length() - 1)) / 100;// 期货收益
+
+		String ED = request.getParameter("Ed");
+		Double Ed = (double) Integer.parseInt(ED.substring(0, ED.length() - 1)) / 100;// 债券收益
+
+		String ES = request.getParameter("Es");
+		Double Es = (double) Integer.parseInt(ES.substring(0, ES.length() - 1)) / 100;// 股票收益
+
+		String EC = request.getParameter("Ec");
+		Double Ec = (double) Integer.parseInt(EC.substring(0, EC.length() - 1)) / 100;// 现金收益
+
+		if (validateToken(userid, token)) {
+			Revenue re = revenueService.selectRevenue(userid);
+			Revenue revenue = new Revenue();
+			revenue.setUserid(userid);
+			revenue.setEc(Ec);
+			revenue.setEd(Ed);
+			revenue.setEf(Ef);
+			revenue.setEs(Es);
+			if (re == null) {
+				revenueService.insertRevenue2(revenue);
+				map = rspFormat("", SUCCESS);
+			} else {
+				revenueService.updateRevenue2(revenue);
+				map = rspFormat("", SUCCESS);
+
+			}
+
+		} else {
+			map = rspFormat("", WRONG_TOKEN);
+		}
+		return map;
+	}
+
+	/**
+	 * 获取智能配置总资产
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/totalassets", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> totalassets(HttpServletRequest request,
+			HttpServletResponse response) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Map<String,Object>> arr=new ArrayList<Map<String,Object>>();
+		Integer userid = Integer.parseInt(request.getParameter("userid"));
+		String token = request.getParameter("token");
+		Revenue revenue = null;
+		if (validateToken(userid, token)) {
+			revenue = revenueService.selectRevenue(userid);
+			if (revenue == null) {
+				map.put("Er", "未找到数据");
+				arr.add(map);
+				map=rspFormat(arr, FAIL);
+			} else {
+				Double Er = revenue.getEr();
+				map.put("Er", Er.toString());
+				arr.add(map);
+				map=rspFormat(arr, SUCCESS);
+			}
+		} else {
+			map = rspFormat("", WRONG_TOKEN);
+		}
+		return map;
+	}
+
+	/**
+	 * 策略推荐
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/strategies", method = { RequestMethod.POST })
+	@ResponseBody
+	public void strategies(HttpServletRequest request,
+			HttpServletResponse response) {
+
+		Integer stid = Integer.parseInt(request.getParameter("stid"));
+		// 根据策略ID进行策略推荐
+
+		XingeApp push = new XingeApp(XingeApp.IOS_MIN_ID, XingeApp.MYKEY);
+		MessageIOS iosMess = new MessageIOS();
+		List<String> accountList = null;
+
+		accountList = new ArrayList<String>();
+		iosMess.setAlert("");
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("type", 5);
+		iosMess.setCustom(map);
+		accountList.add(stid.toString());
+		push.pushAccountList(0, accountList, iosMess, XingeApp.IOSENV_DEV);
+		// JSONObject res= push.pushAccountList(0, accountList, iosMess,
+		// XingeApp.IOSENV_DEV);
+		// return res;
+
+	}
+
+	/**
+	 * 基金推荐
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/fund", method = { RequestMethod.POST })
+	@ResponseBody
+	public void fund(HttpServletRequest request, HttpServletResponse response) {
+
+		Integer fuid = Integer.parseInt(request.getParameter("fuid"));
+		// 根据基金ID进行基金推荐
+
+		XingeApp push = new XingeApp(XingeApp.IOS_MIN_ID, XingeApp.MYKEY);
+		MessageIOS iosMess = new MessageIOS();
+		List<String> accountList = null;
+
+		accountList = new ArrayList<String>();
+		iosMess.setAlert("");
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("type", 4);
+		iosMess.setCustom(map);
+		accountList.add(fuid.toString());
+		push.pushAccountList(0, accountList, iosMess, XingeApp.IOSENV_DEV);
+		// JSONObject res=push.pushAccountList(0, accountList, iosMess,
+		// XingeApp.IOSENV_DEV);
+		// return res;
+
+	}
+}

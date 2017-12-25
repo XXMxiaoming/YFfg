@@ -1,0 +1,44 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class HomeControllerTest extends ControllerTest{
+	
+	@Test
+	public void test1(){
+		String url = host+"homeinfo/bannerinfo.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("", "");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test2(){
+		String url = host+"homeinfo/hotinfo.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("", "");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test3(){
+		String url = host+"homeinfo/information.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("", "");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test4(){
+		String url = host+"future/contactus.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "");
+		map.put("contactWay", "18811218821");
+		map.put("info", "真心赞这款软件");
+		System.out.println(doPost(url, map));
+	}
+}

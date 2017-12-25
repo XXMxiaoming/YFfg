@@ -1,0 +1,23 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class ValidateCodeContollerTest extends ControllerTest{
+
+	@Test
+	public void test1(){
+		String url = host+"validateCode/validateCodeWhenRegister.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("phone", "15914065085");
+		map.put("randomNum", "1364");
+		
+		System.out.println(doPost(url, map));
+	}
+	
+	
+	
+}

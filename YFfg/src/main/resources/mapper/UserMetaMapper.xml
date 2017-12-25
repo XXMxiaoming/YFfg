@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.UserMetaMapper">
+
+	<resultMap  id="BaseResultMap" type="UserMeta">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="user_id" jdbcType="INTEGER" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="gtype" property="gtype" jdbcType="INTEGER" />
+		<result column="created_at" property="created_at" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updated_at" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="INTEGER" />		
+	</resultMap>
+	
+	<insert id="initUserMeta" parameterType="UserMeta">
+	insert into yfgp_user_metas (user_id,type, gtype, created_at, status) values (#{user_id},#{type},#{gtype}, now(), #{status})
+	<selectKey resultType="Integer" keyProperty="id" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+	
+	<update id="updateUserMeta" parameterType="UserMeta">
+	update yfgp_user_metas set type = #{type}, gtype = #{gtype}, updated_at = now(), status = #{status}
+	where user_id = #{userId}
+	</update>
+	
+	<select id="getUserMeta" parameterType="UserMeta" resultMap="BaseResultMap">
+	select * from yfgp_user_metas where user_id = #{user_id} limit 1;
+	</select>
+
+	
+</mapper>

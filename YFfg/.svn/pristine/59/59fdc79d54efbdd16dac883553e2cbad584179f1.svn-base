@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.HomeMapper">
+	<resultMap  id="BaseResultMap" type="Home">
+		<id column="info_id" property="infoId" jdbcType="INTEGER" />
+		<result column="info_type" property="infoType" jdbcType="INTEGER" />
+		<result column="info_sub_type" property="infoSubType" jdbcType="INTEGER" />
+		<result column="info_content_id" property="infoContentId" jdbcType="VARCHAR" />
+		<result column="info_name" property="infoName" jdbcType="VARCHAR" />
+		<result column="info_url" property="infoUrl" jdbcType="VARCHAR" />
+		<result column="info_image_url" property="infoImageUrl" jdbcType="VARCHAR" />
+		<result column="info_status" property="infoStatus" jdbcType="INTEGER" />
+		<result column="info_abstract" property="infoAbstract" jdbcType="VARCHAR" />
+		<result column="info_scan" property="infoScan" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="getBannerInfo" resultMap="BaseResultMap">
+		SELECT * FROM yfgp_home where info_type='0' AND info_status='1' order by info_scan;
+	</select>
+	
+	<select id="getHotInfo" resultMap="BaseResultMap">
+		SELECT * FROM yfgp_home where info_type='1' AND info_status='1'
+	</select>
+	
+	<select id="getInformation" resultMap="BaseResultMap">
+		SELECT * FROM yfgp_home where info_type='2' AND info_status='1'
+	</select>
+	
+	<select id="getRaiseInfo" resultMap="BaseResultMap">
+		SELECT * FROM yfgp_home where info_type='3' AND info_status='1' order by info_scan;
+	</select>
+	
+	<select id="getRecommendList" resultMap="BaseResultMap">
+		SELECT * FROM yfgp_home where info_type='4' AND info_status='1' order by info_scan;
+	</select>
+	
+	<select id="getSuccessInfo" resultMap="BaseResultMap">
+		SELECT * FROM yfgp_home where info_type='5' AND info_status='1' order by info_scan;
+	</select>
+		
+
+	
+	
+</mapper>

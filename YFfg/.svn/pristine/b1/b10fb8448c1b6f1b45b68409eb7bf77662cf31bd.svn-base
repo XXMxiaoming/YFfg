@@ -1,0 +1,47 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class UserAttentionControllerTest extends ControllerTest{
+	
+	@Test
+	public void test1(){
+		String url = host+"userAttention/isAttented.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10123");
+		map.put("attUserName", "B");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test2(){
+		String url = host+"userAttention/attendOperation.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10028");
+		map.put("attUserName", "凯恩斯");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test3(){
+		String url = host+"userAttention/myattentionlist.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10123");
+		//map.put("attUserName", "卢忠庆");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test4(){
+		String url = host+"userAttention/attentminelist.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10123");
+		//map.put("attUserName", "卢忠庆");
+		System.out.println(doPost(url, map));
+	}
+	
+}

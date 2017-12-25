@@ -1,0 +1,391 @@
+package com.yfwl.yfgp.controller;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSONObject;
+import com.tencent.xinge.ClickAction;
+import com.tencent.xinge.XingeApp;
+import com.yfwl.yfgp.model.Fund;
+import com.yfwl.yfgp.model.Fundassets;
+import com.yfwl.yfgp.service.FundService;
+import com.yfwl.yfgp.service.FundassetsService;
+import com.yfwl.yfgp.utils.PropertiesUtils;
+
+@Controller
+@RequestMapping("/fund")
+public class FundController extends BaseController {
+	@Autowired
+	private FundService fundService;
+
+	@Autowired
+	private FundassetsService fundassetsService;
+
+	/**
+	 * 添加一个基金
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/insertFund", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> insertFund(HttpServletRequest request,
+			HttpServletResponse response) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		Integer fid = Integer.parseInt(request.getParameter("fid"));
+		String fname = request.getParameter("fname");
+		String phone = request.getParameter("phone");
+		Fund fund = new Fund();
+		fund.setFid(fid);
+		fund.setFname(fname);
+		fund.setPhone(phone);
+		if (fundService.getFundByFid(fid) == null) {
+			fundService.insertFund(fund);
+			map = rspFormat("", SUCCESS);
+		} else {
+
+			map.put("msg", "您已经添加过此基金");
+			map.put("data", "");
+			map.put("status", "1");
+		}
+
+		return map;
+
+	}
+
+	/**
+	 * 添加一个基金总资产
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/insertFundassets", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> insertFundassets(HttpServletRequest request,
+			HttpServletResponse response) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		Integer fid = Integer.parseInt(request.getParameter("fid"));
+		Double assets = Double.parseDouble(request.getParameter("assets"));
+		Fundassets fundassets = new Fundassets();
+		fundassets.setFid(fid);
+		fundassets.setAssets(assets);
+		fundassetsService.insertFundassets(fundassets);
+		map = rspFormat("", SUCCESS);
+		return map;
+
+	}
+
+	/**
+	 * 查询某只基金
+	 */
+	@RequestMapping(value = "/getFund", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> getFund(HttpServletRequest request,
+			HttpServletResponse response) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Map<String, Object>> arr = new ArrayList<Map<String, Object>>();
+		Integer fid = Integer.parseInt(request.getParameter("fid"));
+
+		Fund fund = null;
+		fund = fundService.getFundByFid(fid);
+		if (fund != null) {
+			map.put("fid", fund.getFid());
+			map.put("fname", fund.getFname());
+			map.put("phone", fund.getPhone());
+			arr.add(map);
+			map = rspFormat(arr, SUCCESS);
+		} else {
+			map.put("msg", "您还没有添加此基金");
+			map.put("data", "");
+			map.put("status", "1");
+		}
+		return map;
+
+	}
+
+	/**
+	 * 设置推荐基金
+	 */
+	@RequestMapping(value = "/setDefaultFund", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> setDefaultFund(HttpServletRequest request,
+			HttpServletResponse response) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		Integer fid = Integer.parseInt(request.getParameter("fid"));
+		Fund fund = null;
+		Fund fund2 = null;
+		fund = fundService.getFundByFid(fid);
+		if (fund == null) {
+			map.put("msg", "您还没有添加此基金");
+			map.put("data", "");
+			map.put("status", "1");
+		} else {
+			fund2 = fundService.getFundByStatus();
+			if (fund2 == null) {
+				fundService.setDefaultFund(fid);
+				map.put("msg", "设置默认基金成功");
+				map.put("data", "");
+				map.put("status", "0");
+			} else {
+				Integer fid2 = fund2.getFid();
+				fundService.setInitialFund(fid2);
+				fundService.setDefaultFund(fid);
+				map = rspFormat("", SUCCESS);
+			}
+		}
+		return map;
+	}
+
+	/**
+	 * 推荐基金
+	 */
+	@RequestMapping(value = "/defaultFund", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> defaultFund(HttpServletRequest request,
+			HttpServletResponse response) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Map<String, Object>> arr = new ArrayList<Map<String, Object>>();
+		Fund fund = null;
+		fund = fundService.getFundByStatus();
+		if (fund == null) {
+			map.put("msg", "目前还没有推荐基金");
+			map.put("data", "");
+			map.put("status", "1");
+		} else {
+			map.put("fid", fund.getFid());
+			map.put("fname", fund.getFname());
+			map.put("phone", fund.getPhone());
+			arr.add(map);
+			map = rspFormat(arr, SUCCESS);
+		}
+		return map;
+	}
+
+//	/**
+//	 * 查询各个标的比例
+//	 */
+//
+//	@RequestMapping(value = "/scale", method = { RequestMethod.POST })
+//	@ResponseBody
+//	public Map<String, Object> scale(HttpServletRequest request,
+//			HttpServletResponse response) {
+//		// Map<String, Object> map = null;
+//		Map<String, Object> map = new HashMap<String, Object>();
+//		List<Map<String, Object>> arr = new ArrayList<Map<String, Object>>();
+//		Integer fid = Integer.parseInt(request.getParameter("fid"));
+//		Fund fund = null;
+//		fund = fundService.getFundByFid(fid);
+//		if (fund == null) {
+//			map = new HashMap<String, Object>();
+//			map.put("msg", "您还没有添加此基金");
+//			map.put("data", "");
+//			map.put("status", "1");
+//		} else {
+//			map = new HashMap<String, Object>();
+//			map.put("name", "股票");
+//			map.put("scale", "20%");
+//			arr.add(map);
+//
+//			map = new HashMap<String, Object>();
+//			map.put("name", "债券");
+//			map.put("scale", "30%");
+//			arr.add(map);
+//
+//			map = new HashMap<String, Object>();
+//			map.put("name", "期货");
+//			map.put("scale", "30%");
+//			arr.add(map);
+//
+//			map = new HashMap<String, Object>();
+//			map.put("name", "现金");
+//			map.put("scale", "20%");
+//			arr.add(map);
+//			map = rspFormat(arr, SUCCESS);
+//
+//		}
+//
+//		return map;
+//	}
+
+	/**
+	 * 查询总资产
+	 */
+	@RequestMapping(value = "/getFundassets", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> getFundassets(HttpServletRequest request,
+			HttpServletResponse response) {
+		Map<String, Object> map = null;
+		List<Map<String, Object>> arr = new ArrayList<Map<String, Object>>();
+		Integer fid = Integer.parseInt(request.getParameter("fid"));
+		Fund fund = null;
+		fund = fundService.getFundByFid(fid);
+		if (fund == null) {
+			map = new HashMap<String, Object>();
+			map.put("msg", "您还没有添加此基金，不能查询");
+			map.put("data", "");
+			map.put("status", "1");
+		} else {
+			List<Fundassets> FundassetsList = fundassetsService.getAssets(fid);
+			if (!FundassetsList.isEmpty()) {
+				for (Fundassets fundassets : FundassetsList) {
+					map = new HashMap<String, Object>();
+					map.put("assets", fundassets.getAssets());
+					map.put("date", fundassets.getDate().toLocaleString()
+							.substring(0, 9));
+					arr.add(map);
+				}
+				map = rspFormat(arr, SUCCESS);
+			} else {
+				map = new HashMap<String, Object>();
+				map.put("msg", "目前还没有该基金的总资产");
+				map.put("data", "");
+				map.put("status", "1");
+			}
+		}
+		return map;
+	}
+
+	/**
+	 * 基金推送消息
+	 */
+	@RequestMapping(value = "/fundrate", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> fundrate(HttpServletRequest request,
+			HttpServletResponse response) {
+		SimpleDateFormat xgsdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date datenow = new Date();
+		String xgtime = xgsdf.format(datenow);
+	
+		Map<String, Object> map = null;
+		List<Map<String, Object>> arr = new ArrayList<Map<String, Object>>();
+		Integer fid = Integer.parseInt(request.getParameter("fid"));
+		Fund fund =null;
+		fund=fundService.getFundByFid(fid);
+		if(fund==null){
+			map=new HashMap<String, Object>();
+			map.put("msg", "还没有该基金");
+			map.put("data", "");
+			map.put("status", "1");
+		}else{
+			String name=fund.getFname();
+			List<Fundassets> FundassetsList = fundassetsService.getAssets(fid);
+			if (FundassetsList.isEmpty()) {
+				map=new HashMap<String, Object>();
+				map.put("msg", "目前还没有该基金的总资产");
+				map.put("data", "");
+				map.put("status", "1");
+			} else {
+				Fundassets fundassets1 = null;
+				Fundassets fundassets2 = null;
+				fundassets1 = fundassetsService.getFirstdate(fid);
+			//	System.out.println("gfdhkjghksgjk");
+				fundassets2 = fundassetsService.getLastdate(fid);
+				Double assets1 = fundassets1.getAssets();
+				Double assets2 = fundassets2.getAssets();
+				Double scale = (assets2 - assets1) / assets1;
+				BigDecimal sc = new BigDecimal(scale).setScale(2, RoundingMode.UP);
+			//	System.out.println(sc+"gjskd");
+				Map<String, Object> map2 = new HashMap<String, Object>();
+				map2.put("type", "4");// 基金推荐
+				map2.put("scale",sc.toString());
+				map2.put("time", xgtime);
+				map2.put("name", name);
+				XingeApp.pushAllAndroid2(XingeApp.ANDRIOD_MAX_ID,
+						XingeApp.ANDRIOD_MYKEY, "宜发投资机器人", "您有一条新消息", map2);
+				XingeApp.pushAllIos2(XingeApp.IOS_ID, XingeApp.IOS_MYKEY,
+						"您有一条新消息", map2, XingeApp.IOSENV_PROD);
+				
+				map=new HashMap<String, Object>();
+				map = rspFormat("", SUCCESS);
+			}
+		}
+		
+		return map;
+	}
+
+	/**
+	 * 查询各个标的比例
+	 */
+
+	@RequestMapping(value = "/scale", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> scale(HttpServletRequest request,
+			HttpServletResponse response) {
+		// Map<String, Object> map = null;
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Map<String, Object>> arr = new ArrayList<Map<String, Object>>();
+		Integer fid = Integer.parseInt(request.getParameter("fid"));
+		Fund fund = null;
+		fund = fundService.getFundByFid(fid);
+		if (fund == null) {
+			map = new HashMap<String, Object>();
+			map.put("msg", "您还没有添加此基金");
+			map.put("data", "");
+			map.put("status", "1");
+		} else {
+			Properties pps = new Properties();
+			try {
+				pps.load(new InputStreamReader(PropertiesUtils.class
+						.getClassLoader().getResourceAsStream(
+								"properties/fund.properties"), ("utf-8")));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Enumeration enum1 = pps.propertyNames();
+			Map<String, String> ParamMap = null;
+			while (enum1.hasMoreElements()) {
+				String strKey = (String) enum1.nextElement();
+				String strValue = pps.getProperty(strKey);
+				//System.out.println(strValue);
+				JSONObject jsStr = JSONObject.parseObject(strValue);
+				String id = jsStr.getString("fid");
+				if (!id.equals(fid.toString())) {
+					map.put("msg", "目前还没有此基金各个标的比例");
+					map.put("data", "");
+					map.put("status", "1");
+					continue;
+				} else {
+					String name[];
+					String scale[];
+					name=jsStr.getString("name").split(",");
+					scale=jsStr.getString("scale").split(",");
+					for (int i = 0; i < name.length; i++) {
+						map=new HashMap<String, Object>();
+						map.put("name", name[i]);
+						map.put("scale", scale[i]);
+						arr.add(map);
+						map=rspFormat(arr, SUCCESS);
+						
+					}
+					return map;
+				}
+			}
+
+		}
+		return map;
+	}
+
+}

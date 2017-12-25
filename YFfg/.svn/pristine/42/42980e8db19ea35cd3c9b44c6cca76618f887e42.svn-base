@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yfwl.yfgp.dao.TokenMapper">
+
+	<resultMap type="Token" id="BaseResultMap">
+		<id column="token_id" property="tokenId" jdbcType="INTEGER" />
+	    <result column="access_token" property="accessToken" jdbcType="VARCHAR" />
+	    <result column="token_type" property="tokenType" jdbcType="VARCHAR" />
+	    <result column="expires_in" property="expiresIn" jdbcType="VARCHAR" />
+	    <result column="refresh_token" property="refreshToken" jdbcType="VARCHAR" />
+	    <result column="open_id" property="openId" jdbcType="VARCHAR" />
+	    <result column="expires_time" property="expiresTime" jdbcType="TIMESTAMP" />
+	    <result column="user_id" property="userId" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<!-- 以下是未登录时获取token所要用到的SQL -->
+	<!-- 新增一条token信息 -->
+	<insert id="insertNewToken" parameterType="Token">
+		INSERT INTO yfgp_hstoken (
+			access_token,
+			token_type,
+			expires_in,
+			refresh_token,
+			expires_time,
+			open_id
+		)
+		VALUES
+			(#{accessToken}, #{tokenType}, #{expiresIn}, #{refreshToken}, #{expiresTime}, #{openId})	
+	</insert>	
+	<!-- 判断这个openid有没有申请过token -->
+	<select id="checkOpenIdIsRequested" parameterType="String" resultType="Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			yfgp_hstoken
+		WHERE
+			open_id = #{openId}	
+	</select>
+	<select id="selectTokenByOpenId" parameterType="String" resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+			(
+				SELECT
+					*
+				FROM
+					yfgp_hstoken
+				WHERE
+					open_id = #{openId}	
+				ORDER BY
+					expires_time DESC
+			) AS A
+			LIMIT 0,1
+	</select>	
+	<!-- 更新token记录 -->
+	<update id="updateToken" parameterType="Token">
+		UPDATE yfgp_hstoken
+		SET access_token = #{accessToken},
+		 token_type = #{tokenType},
+		 expires_in = #{expiresIn},
+		 refresh_token = #{refreshToken},
+		 expires_time = #{expiresTime}
+		WHERE
+			open_id = #{openId}		
+	</update>
+	
+	<!-- 更新token的userId字段 -->
+	<update id="updateUserIdOfToken" >
+		UPDATE yfgp_hstoken
+		SET user_id = #{userId}
+		WHERE
+			open_id = #{openId}
+	</update>
+	
+	<!-- 以下是登录时获取token所要用到的SQL -->
+	<!-- 判断这个userId有没有申请过token -->
+	<select id="checkUserIdIsRequested" parameterType="Integer" resultType="Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			yfgp_hstoken
+		WHERE
+			user_id = #{userId}	
+	</select>
+	<!-- 根据userId查找token -->
+	<select id="selectTokenByUserId" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+			(
+				SELECT
+					*
+				FROM
+					yfgp_hstoken
+				WHERE
+					user_id = #{userId}	
+				ORDER BY
+					expires_time DESC
+			) AS A
+			LIMIT 0,1
+	</select>
+	<!-- 登录时新增一条token -->
+	<insert id="insertTokenLoginOn" parameterType="Token">
+		INSERT INTO yfgp_hstoken (
+			access_token,
+			token_type,
+			expires_in,
+			refresh_token,
+			expires_time,
+			user_id
+		)
+		VALUES
+			(#{accessToken}, #{tokenType}, #{expiresIn}, #{refreshToken}, #{expiresTime}, #{userId})		
+	</insert>
+	<!-- 登录时更新token记录 -->
+	<update id="updateTokenLoginOn" parameterType="Token">
+		UPDATE yfgp_hstoken
+		SET access_token = #{accessToken},
+		 token_type = #{tokenType},
+		 expires_in = #{expiresIn},
+		 refresh_token = #{refreshToken},
+		 expires_time = #{expiresTime}
+		WHERE
+			user_id = #{userId}		
+	</update>
+	
+	
+	<!-- 查找用户对应的token -->
+  <select id="selectTokenByLoginName" parameterType="String" resultType="String">
+	SELECT
+		access_token
+	FROM
+		yfgp_hstoken
+	WHERE
+		user_id = (
+			SELECT
+				user_id
+			FROM
+				yfgp_user
+			WHERE
+				user_name = #{loginName}
+			OR phone = #{loginName}
+		)  
+  </select>
+  <select id="selectTokenByUserId2" parameterType="Integer" resultType="String">
+	SELECT
+		access_token
+	FROM
+		yfgp_hstoken
+	WHERE
+		user_id = #{userId} 
+  </select>
+</mapper>

@@ -1,0 +1,38 @@
+package com.yfwl.yfgp.serviceImpl;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.yfwl.yfgp.dao1.IncomeLossMapper;
+import com.yfwl.yfgp.model.incomeLoss;
+import com.yfwl.yfgp.service.IncomeLossService;
+
+@Service
+public class IncomeLossServiceImpl implements IncomeLossService{
+@Autowired
+IncomeLossMapper incomeLossmapper;
+
+@Override
+public incomeLoss getincomeLoss(Integer userid) {
+	// TODO Auto-generated method stub
+	return incomeLossmapper.getincomeLoss(userid);
+}
+
+
+
+@Override
+public Integer deleteIncomeLoss(Integer userid) {
+	// TODO Auto-generated method stub
+	return incomeLossmapper.deleteIncomeLoss(userid);
+}
+
+
+
+@Override
+public Integer insertIncomeLoss(incomeLoss inlo) {
+	// TODO Auto-generated method stub
+	return incomeLossmapper.insertIncomeLoss(inlo);
+}
+
+}

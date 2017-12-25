@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.AccountsMapper2">
+	
+	<resultMap id="AccountsResultMap" type="com.yfwl.yfgp.model.Accounts2" >
+		<id column="userid" property="userId" jdbcType="INTEGER" />
+		<result column="gname" property="gname" jdbcType="VARCHAR" />
+		<result column="gid" property="gid" jdbcType="INTEGER" />
+	   <result column="total" property="total" jdbcType="DECIMAL" />
+	    <result column="stock" property="stock" jdbcType="DECIMAL" />
+	    <result column="available" property="available" jdbcType="DECIMAL" />
+	    <result column="frozen" property="frozen" jdbcType="DECIMAL" />
+	    <result column="gznum" property="gznum" jdbcType="INTEGER" />
+	    <result column="gtnum" property="gtnum" jdbcType="INTEGER" />
+	    <result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+	    <result column="raisetime" property="raisetime" jdbcType="TIMESTAMP" />
+	    <result column="endtime" property="endtime" jdbcType="TIMESTAMP" />
+	    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+	    <result column="del" property="del" jdbcType="INTEGER" />
+	    <result column="deltime" property="deltime" jdbcType="TIMESTAMP" />
+	    <result column="info" property="info" jdbcType="VARCHAR" />
+	    <result column="attr" property="attr" jdbcType="INTEGER" />
+	    <result column="optigid" property="optigid" jdbcType="INTEGER" />
+	    
+	    <result column="userName" property="userName" jdbcType="VARCHAR" />
+	    <result column="headImage" property="headImage" jdbcType="VARCHAR" />
+	    <result column="subscribeFee" property="subscribeFee" jdbcType="DECIMAL" />
+	    <result column="redPacket" property="redPacket" jdbcType="DECIMAL" />
+	    <result column="goalEarnings" property="goalEarnings" jdbcType="DECIMAL" />
+	    <result column="endEarnings" property="endEarnings" jdbcType="DECIMAL" />
+	    <result column="limitPeopleNum" property="limitPeopleNum" jdbcType="INTEGER" />
+	    <result column="subscribeNum" property="subscribeNum" jdbcType="INTEGER" />
+	</resultMap>
+	
+	
+	<select id="getFeeAccounts" parameterType="Integer" resultMap="AccountsResultMap">
+		SELECT
+			*,
+			(SELECT U.user_name FROM yfgp.yfgp_user U WHERE U.user_id = A.userid) AS userName,
+			(SELECT U.head_image FROM yfgp.yfgp_user U WHERE U.user_id = A.userid) AS headImage,
+			(SELECT ROUND((A.total-1000000)/10000,2)  ) AS endEarnings
+		FROM
+			accounts A
+		WHERE
+			A.gid = #{gid}
+	</select>
+	<select id="getSubscribeNum" parameterType="Integer" resultType="Integer">
+		SELECT
+			COUNT(id)
+		FROM
+			yfgp.yfgp_order
+		WHERE
+			order_id = (
+				SELECT
+					O.id
+				FROM
+					yfgp.yfgp_order O
+				WHERE
+					O.out_trade_no = #{gid}
+			)		
+	</select>
+	
+	<!-- 获取推荐组合 -->
+	<select id="getTJAccounts" resultMap="AccountsResultMap">
+		SELECT
+			*
+		FROM
+			accounts
+		WHERE
+			attr = 12	
+	</select>
+	<select id="getTJAccountsSequences" parameterType="String" resultType="String">
+		SELECT
+			info_abstract
+		FROM
+			yfgp_home
+		WHERE
+			info_content_id = #{gid}
+	</select>
+	
+	<update id="updateGZnum" parameterType="Integer">
+		UPDATE accounts SET gznum = gznum + 1 WHERE gid = #{gid}
+	</update>
+	
+	
+</mapper>

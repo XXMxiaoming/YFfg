@@ -1,0 +1,12 @@
+package com.yfwl.yfgp.service;
+
+import com.yfwl.yfgp.model.incomeLoss;
+
+public interface IncomeLossService {
+
+	public incomeLoss getincomeLoss(Integer userid);
+	
+	public Integer insertIncomeLoss(incomeLoss inlo);
+	
+	public Integer deleteIncomeLoss(Integer userid);
+}

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.yfwl.yfgp.dao.ValidateCodeMapper" >
+
+	<resultMap type="ValidateCode" id="BaseResultMap">
+		<id column="validate_id" property="validateId" jdbcType="INTEGER" />
+    	<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="random_num" property="randomNum" jdbcType="VARCHAR" />
+		<result column="marker" property="marker" jdbcType="VARCHAR" />
+		<result column="time" property="time" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<insert id="initCode" parameterType="ValidateCode">
+		INSERT INTO yfgp_validatecode (phone, random_num, marker,time)
+		VALUES
+			(#{phone}, #{randomNum}, #{marker},SYSDATE())
+	</insert>
+	
+	<select id="getCode" parameterType="ValidateCode" resultMap="BaseResultMap">
+	select * from yfgp_validatecode where phone=#{phone} AND marker=#{marker} ORDER BY validate_id DESC limit 1
+	</select>
+	
+	<update id="updateCode" parameterType="ValidateCode">
+		UPDATE yfgp_validatecode
+		SET random_num = #{randomNum},
+			time = SYSDATE()
+		WHERE
+			phone = #{phone}
+		AND marker = #{marker}	
+	</update>
+	
+	
+	
+</mapper>

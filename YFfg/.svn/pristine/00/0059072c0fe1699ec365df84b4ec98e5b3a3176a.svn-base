@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.ArticlePhotoMapper">
+	
+	<resultMap type="ArticlePhoto" id="BaseResultMap">
+		<id column="art_photo_id" property="artPhotoId" jdbcType="INTEGER" />
+		<result column="article_id" property="articleId" jdbcType="INTEGER" />
+		<result column="photo_url" property="photoUrl"  jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="selectArtPhotoUrl" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT
+			photo_url
+		FROM
+			yfgp_article_photo
+		WHERE
+			article_id = #{articleId}
+		LIMIT 1	
+	</select>
+	
+	<select id="selectArtPhotoUrlList" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT
+			photo_url
+		FROM
+			yfgp_article_photo
+		WHERE
+			article_id = #{articleId}
+	</select>
+	
+</mapper>

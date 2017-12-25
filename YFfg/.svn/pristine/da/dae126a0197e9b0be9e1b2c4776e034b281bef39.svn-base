@@ -1,0 +1,75 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class FutureControllerTest extends ControllerTest{
+	
+	@Test
+	public void test1(){
+		String url = host+"future/getimage.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10020");
+		map.put("password", "lynn520");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test2(){
+		String url = host+"future/setidentity.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10020");
+		System.out.println(doPost(url, map));
+	}
+	
+	/*
+	 * 删除多支股票
+	 */
+	@Test
+	public void testUpdateStock(){
+		String url = host+"future/deletestock.do";
+		HashMap<String , String> map = new HashMap<String, String>();
+		map.put("userId", "1");
+		map.put("codeStr", "10010$$中国银行,10011$$中国邮政,10012$$中国电信");
+		System.out.println(doPost(url,map));
+	}
+	
+	/*
+	 * 删除一支股票
+	 */
+	@Test
+	public void testDeleteStock(){
+		String url = host+"future/deletestock2.do";
+		HashMap<String , String> map = new HashMap<String, String>();
+		map.put("userId", "1");
+		map.put("stockCode", "10010$$中国银行");
+		System.out.println(doPost(url,map));
+	}
+	
+	/*
+	 * 添加一支股票
+	 */
+	@Test
+	public void testInsertStock2(){
+		String url = host+"future/insertstock2.do";
+		HashMap<String , String> map = new HashMap<String, String>();
+		map.put("userId", "1");
+		map.put("stockCode", "10010$$中国银行");
+		System.out.println(doPost(url,map));
+	}
+	
+	/*
+	 * 根据用户id获取股票信息
+	 */
+	@Test
+	public void testsetStock(){
+		String url = host+"future/getstock.do";
+		HashMap<String , String> map = new HashMap<String, String>();
+		map.put("userId", "100014");
+		System.out.println(doPost(url,map));
+	}
+	
+}

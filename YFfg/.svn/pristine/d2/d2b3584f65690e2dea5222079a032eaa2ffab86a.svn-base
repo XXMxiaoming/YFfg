@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.StockinfoMapper">
+
+	<resultMap  id="BaseResultMap" type="Stockinfo">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="stockid" property="stockid" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="market" property="market" jdbcType="INTEGER" />
+		<result column="bspoint" property="bspoint" jdbcType="INTEGER" />
+		<result column="date" property="date" jdbcType="INTEGER" />
+		<result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+		<result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<select id="getStockinfo" parameterType="Stockinfo" resultMap="BaseResultMap">
+	select * from stockinfo where stockid = #{stockid} limit 1;
+	</select>
+	
+	<select id="getAllStockinfo"  resultMap="BaseResultMap">
+	select * from stockinfo;
+	</select>
+	
+	<select id="getStock" parameterType="String" resultMap="BaseResultMap">
+	select * from stockinfo where stockid = #{stockCode} limit 1;
+	</select>
+	
+	<update id="updateStockinfo" parameterType="Stockinfo">
+	update stockinfo set bspoint=#{bspoint},date=#{date},updatetime=#{updatetime}where stockid=#{stockid}
+	</update>
+	
+	
+	<insert id="insertStockinfo" parameterType="Stockinfo">
+	insert into stockinfo (stockid,name,market,createtime) values(#{stockid},#{name},#{market},#{createtime});
+	</insert>
+	<select id="getStockinfoByName" parameterType="String" resultMap="BaseResultMap">
+	select * from stockinfo where name = #{name} limit 1;
+	</select>
+	
+</mapper>

@@ -1,0 +1,18 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+import org.junit.Test;
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class VideoControllerTest extends ControllerTest {
+	
+	@Test
+	public void test1(){
+		String url = host+"account/video.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("selfUserId", "0");
+		map.put("pageNow","1");
+		System.out.println(doPost(url, map));
+	}
+
+}

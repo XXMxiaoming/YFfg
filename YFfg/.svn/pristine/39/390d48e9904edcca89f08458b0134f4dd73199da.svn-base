@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.OrderBookMapper">
+
+	<resultMap  id="BaseResultMap" type="OrderBook">
+		<id column="orderid" property="orderid" jdbcType="INTEGER" />
+		<result column="gid" property="gid" jdbcType="INTEGER" />
+		<result column="stockid" property="stockid" jdbcType="VARCHAR" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="vol" property="vol" jdbcType="INTEGER" />
+		<result column="action" property="action" jdbcType="INTEGER" />
+		<result column="inserttime" property="inserttime" jdbcType="TIMESTAMP" />
+		<result column="name" property="name" jdbcType="VARCHAR" /> 
+		<!-- <result column="parentid" property="parentid" jdbcType="INTEGER" /> -->
+	</resultMap>
+	
+	<select id="getOrderBook" parameterType="OrderBook" resultMap="BaseResultMap">
+	select orderbook.*,stockinfo.name from orderbook join stockinfo on orderbook.stockid=stockinfo.stockid where orderbook.orderid = #{orderid};
+	</select>
+	
+	<select id="getOrderBookList" parameterType="OrderBook" resultMap="BaseResultMap">
+	select orderbook.*,stockinfo.name from orderbook join stockinfo on orderbook.stockid=stockinfo.stockid where orderbook.gid = #{gid};
+	</select>
+	
+	<!-- 通过组合ID和股票代码查找订单 -->
+	<select id="getOrderBookByGidAndStockid" parameterType="OrderBook" resultMap="BaseResultMap">
+	select orderbook.*,stockinfo.name from orderbook join stockinfo on orderbook.stockid=stockinfo.stockid where orderbook.gid = #{gid} and orderbook.stockid = #{stockid};
+	</select>
+	
+	<select id="getAllOrderBookList"  resultMap="BaseResultMap">
+	select * from orderbook;
+	</select>
+	
+	<insert id="initOrderBook" parameterType="OrderBook">
+	insert into orderbook (gid, stockid, price, vol, action, inserttime) values (#{gid},#{stockid},#{price},#{vol},#{action},#{inserttime})
+	<selectKey resultType="Integer" keyProperty="orderid" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+	
+	<delete id="deleteOrderBook" parameterType="OrderBook">
+	delete from orderbook where orderid=#{orderid}
+	</delete>
+	
+	<delete id="deleteAccountsOrder" parameterType="OrderBook">
+	delete from orderbook where gid=#{gid}
+	</delete>
+	
+	
+	<select id="getOrderBookList2" parameterType="OrderBook" resultMap="BaseResultMap">
+	select * from orderbook where gid = #{gid};
+	</select>
+</mapper>

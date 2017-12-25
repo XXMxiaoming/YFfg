@@ -1,0 +1,116 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class DynContentControllerTest extends ControllerTest{
+	
+	@Test
+	public void test1(){
+		String url = host+"dyncontent/selectOtherContent.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "64");
+		map.put("pageNow", "1");
+		
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test2(){
+		String url = host+"dyncontent/addDynContentOnlyWord.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10020");
+		map.put("conWord", "哈哈哈");
+		map.put("token", "969DFEB646C64FC59B531BCC3ACF0B802015121815242568193207");
+		map.put("conType", "1");
+		System.out.println(doPost(url, map));
+	}
+	
+	/*@Test
+	public void test3(){
+		String url = host+"dyncontent/selectFriendContentList.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10044");
+		map.put("token", "3D190C603AFF43D083A2294969DE55CC2016011820055092864876");
+		map.put("pageNow", "1");
+		
+		System.out.println(doPost(url, map));
+	}*/
+	
+	@Test
+	public void test3(){
+		String url = host+"dyncontent/selectFriendContentList.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "85");
+		map.put("token", "F27D00FE508047CCA81B5CB3B088D3262016042817305970477557");
+		map.put("pageNow", "1");
+		
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test9(){
+		String url = host+"dyncontent/selectNewFriendContentList.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10032");
+		map.put("selfUserId", "10032");
+		map.put("token", "25AADDEA97034DA78CE2CF7E766157362016091909235995823693");
+		map.put("pageNow", "3");
+		
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test4(){
+		String url = host+"dyncontent/selectDynContentByUserName.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userName", "风雨");
+		map.put("pageNow", "1");
+		
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test5(){
+		String url = host+"dyncontent/selectOwnContent.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10032");
+		map.put("token", "29F0B23A3D374F69AD6B58E7EC14A6A82016012016375382800210");
+		map.put("pageNow", "1");
+		
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test6(){
+		String url = host+"dyncontent/operateGoodCount.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("contentId", "599");
+		map.put("flag", "true");
+		
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test7(){
+		String url = host+"dyncontent/insertDynContent.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("conId", "3261");
+		map.put("userId", "85");
+		map.put("conType", "11");
+		map.put("conWord", "分享一个组合");
+		
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test8(){
+		String url = host+"dyncontent/deleteOwnContent.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("contentId", "123957");
+		System.out.println(doPost(url, map));
+	}
+}

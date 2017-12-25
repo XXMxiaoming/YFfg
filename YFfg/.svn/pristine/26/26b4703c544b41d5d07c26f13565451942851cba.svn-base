@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.IncomeLossMapper">
+
+	<resultMap  id="BaseResultMap" type="IncomeLoss">
+		<id column="userid" property="userid" jdbcType="INTEGER" />
+		<result column="income" property="income" jdbcType="DECIMAL" />
+		<result column="loss" property="loss" jdbcType="DECIMAL" />
+		<result column="status" property="status" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<insert id="insertIncomeLoss" parameterType="IncomeLoss">
+	insert into income_loss (income,loss,userid,status) values (#{income},#{loss},#{userid},1)
+	</insert>
+	
+	<update id="deleteIncomeLoss"  parameterType="integer">
+	update  income_loss set status='0' where userid=#{userid}
+	</update>
+	
+	<select id="getincomeLoss"  parameterType="integer" resultMap="BaseResultMap">
+		select * from income_loss where userid=#{userid} 
+	</select>
+	<select id="getAllIncomeLoss" resultMap="BaseResultMap">
+	select * from income_loss
+	</select>
+	
+	<select id="getIncomeLossExsit" parameterType="integer" resultMap="BaseResultMap">
+	select * from income_loss where userid=#{userid}
+	</select>
+	
+	
+	<update id="updateIncomeLoss" parameterType="IncomeLoss">
+	update income_loss set income=#{income},loss=#{loss},status='1' where userid=#{userid}
+	</update>
+</mapper>

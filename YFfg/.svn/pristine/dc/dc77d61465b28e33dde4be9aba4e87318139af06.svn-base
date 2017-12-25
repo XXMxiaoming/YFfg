@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+  <!-- 添加调度的任务bean 配置对应的class-->
+  <bean id="OrderBookSchedule" class="com.yfwl.yfgp.schedule.OrderBookSchedule" />
+  <!--配置调度具体执行的方法-->
+  <bean id="OderBookDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject" ref="OrderBookSchedule" />
+    <property name="targetMethod" value="bindSchedule" />
+    <property name="concurrent" value="false" />
+  </bean>
+  <!--配置调度执行的触发的时间-->
+  <bean id="OrderBookTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="OderBookDetail" />
+    <property name="cronExpression">
+      <!-- 周一到周五每天早上9点到下午3点每5秒执行任务调度 9-15 -->
+      <value>5/5 * 9-15 ? * MON-FRI</value>
+    </property>
+  </bean>
+  
+  <bean id="AccountsSchedule" class="com.yfwl.yfgp.schedule.AccountsSchedule" />
+  <!--配置调度具体执行的方法-->
+  <bean id="AccountsDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject" ref="AccountsSchedule" />
+    <property name="targetMethod" value="bindSchedule" />
+    <property name="concurrent" value="false" />
+  </bean>
+  <!--配置调度执行的触发的时间-->
+  <bean id="AccountsTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="AccountsDetail" />
+    <property name="cronExpression">
+      <!-- 周一到周五每天早上9点到下午3点每5秒执行任务调度 -->
+      <value>0/5 * 9-15 ? * MON-FRI</value>
+    </property>
+  </bean>
+  
+  
+  <bean id="ClearSchedule" class="com.yfwl.yfgp.schedule.ClearSchedule" />
+  <!--配置调度具体执行的方法-->
+  <bean id="ClearDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject" ref="ClearSchedule" />
+    <property name="targetMethod" value="bindSchedule" />
+    <property name="concurrent" value="false" />
+  </bean>
+  <!--配置调度执行的触发的时间-->
+  <bean id="ClearTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="ClearDetail" />
+    <property name="cronExpression">
+      <!-- 周一到周五每天16:00点执行任务调度 -->
+      <value>0 0 16 * * ?</value>
+    </property>
+  </bean>
+  
+  <bean id="OptiSchedule" class="com.yfwl.yfgp.schedule.OptiSchedule" />
+  <!--配置调度具体执行的方法-->
+  <bean id="OptiDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject" ref="OptiSchedule" />
+    <property name="targetMethod" value="bindSchedule" />
+    <property name="concurrent" value="false" />
+  </bean>
+  <!--配置调度执行的触发的时间-->
+  <bean id="OptiTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="OptiDetail" />
+    <property name="cronExpression">
+      <!-- 周一到周五每天15:30点执行任务调度 0 0/1 9-15 ? * MON-FRI -->
+      <value>0 0/1 9-15 ? * *</value>
+    </property>
+  </bean>
+  
+  
+  <bean id="OrderSchedule" class="com.yfwl.yfgp.schedule.OrderSchedule" />
+  <!--配置调度具体执行的方法-->
+  <bean id="OrderDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject" ref="OrderSchedule" />
+    <property name="targetMethod" value="bindSchedule" />
+    <property name="concurrent" value="false" />
+  </bean>
+  <!--配置调度执行的触发的时间-->
+  <bean id="OrderTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="OrderDetail" />
+    <property name="cronExpression">
+      <!-- 周30分钟执行任务调度 -->
+      <value>0 0/30 * * * ?</value>
+    </property>
+  </bean>
+  
+  
+  <bean id="InitSchedule" class="com.yfwl.yfgp.schedule.InitSchedule" />
+  <!--配置调度具体执行的方法-->
+  <bean id="InitDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject" ref="InitSchedule" />
+    <property name="targetMethod" value="bindSchedule" />
+    <property name="concurrent" value="false" />
+  </bean>
+  <!--配置调度执行的触发的时间-->
+  <bean id="InitTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="InitDetail" />
+    <property name="cronExpression">
+      <!-- 周一到周五每天9:00点执行任务调度 -->
+      <value>0 05 15 * * ?</value>
+    </property>
+  </bean>
+  
+  <bean id="ClearAccounts" class="com.yfwl.yfgp.schedule.ClearAccounts" />
+  <!--配置调度具体执行的方法-->
+  <bean id="ClearAccountsDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject" ref="ClearAccounts" />
+    <property name="targetMethod" value="bindSchedule" />
+    <property name="concurrent" value="false" />
+  </bean>
+  <!--配置调度执行的触发的时间-->
+  <bean id="ClearAccountsTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="ClearAccountsDetail" />
+    <property name="cronExpression">
+      <!-- 周一到周五每天16:00点执行任务调度 -->
+      <value>0 55 14 ? * MON-FRI</value>
+    </property>
+  </bean>
+  
+  <bean id="AutoSchedule" class="com.yfwl.yfgp.schedule.AutoSchedule" />
+  <!--配置调度具体执行的方法-->
+  <bean id="AutoDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject" ref="AutoSchedule" />
+    <property name="targetMethod" value="bindSchedule" />
+    <property name="concurrent" value="false" />
+  </bean>
+  <!--配置调度执行的触发的时间-->
+  <bean id="AutoTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="AutoDetail" />
+    <property name="cronExpression">
+      <!-- 周一到周五每天16:00点执行任务调度 -->
+      <value>0/10 * 6-19 * * ?</value>
+    </property>
+  </bean>
+  
+  
+  <bean id="SendStockUpDownMsgSchedule" class="com.yfwl.yfgp.schedule.SendStockUpDownMsgSchedule" />
+  <!--配置调度具体执行的方法-->
+  <bean id="SendStockUpDownMsgScheduleDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject" ref="SendStockUpDownMsgSchedule" />
+    <property name="targetMethod" value="bindSchedule" />
+    <property name="concurrent" value="false" />
+  </bean>
+  <!--配置调度执行的触发的时间-->
+  <bean id="SendStockUpDownMsgScheduleTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="SendStockUpDownMsgScheduleDetail" />
+    <property name="cronExpression">
+      <!-- 周一到周五每天9:00点执行任务调度 -->
+      <value>0 0 9 * * ? *</value>
+    </property>
+  </bean>
+  
+  
+  <!-- 买卖点 更新-->
+   <bean id="stockInfoSchedule" class="com.yfwl.yfgp.schedule.stockInfoSchedule" />
+  <!--配置调度具体执行的方法-->
+  <bean id="stockInfoBspoint" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject" ref="stockInfoSchedule" />
+    <property name="targetMethod" value="bindSchedule" />
+    <property name="concurrent" value="false" />
+  </bean>
+  <!--配置调度执行的触发的时间-->
+  <bean id="stockInfoTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="stockInfoBspoint" />
+    <property name="cronExpression">
+      <!-- 周一到周五每天下午17:00点执行任务调度 -->
+      <value>0 0 17 * * ?*</value>
+    </property>
+  </bean>
+  
+  <!-- 市场 详细信息获取股票添加到stockinfo里面-->
+  <bean id="MarketInformationDetailSchedule" class="com.yfwl.yfgp.schedule.MarketInformationDetailSchedule" />
+  <!--配置调度具体执行的方法-->
+  <bean id="MarketDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject" ref="MarketInformationDetailSchedule" />
+    <property name="targetMethod" value="bindSchedule" />
+    <property name="concurrent" value="false" />
+  </bean>
+  <!--配置调度执行的触发的时间-->
+  <bean id="MarketInformationDetailTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="MarketDetail" />
+    <property name="cronExpression">
+      <!-- 周一到周五每天下午16:30点执行任务调度 -->
+      <value>0 30 16 * * ?</value>
+    </property>
+  </bean>
+  
+  <!-- 收益-->
+  <bean id="RevenueSchedule" class="com.yfwl.yfgp.schedule.RevenueSchedule" />
+  <!--配置调度具体执行的方法-->
+  <bean id="RevenueDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject" ref="RevenueSchedule" />
+    <property name="targetMethod" value="bindSchedule" />
+    <property name="concurrent" value="false" />
+  </bean>
+  <!--配置调度执行的触发的时间-->
+  <bean id="RevenueTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+    <property name="jobDetail" ref="RevenueDetail" />
+    <property name="cronExpression">
+      <!-- 周一到周五每天下午17:30点执行任务调度 -->
+      <value>0 0 18 * * ?</value>
+    </property>
+  </bean>
+  
+  
+  
+  <!-- quartz的调度工厂 调度工厂只能有一个，多个调度任务在list中添加 -->
+  <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    <property name="triggers">
+      <list> 
+   
+         <!-- 所有的调度列表-->
+ <!--  -->
+		<ref local="InitTrigger" /> 
+        <ref local="OrderBookTrigger" /> 
+        <ref local="ClearTrigger" />
+    	<ref local="OrderTrigger" />
+        <ref local="AutoTrigger"/>
+        <ref local="OptiTrigger" /> 
+     	<ref local="SendStockUpDownMsgScheduleTrigger" />  
+      	<ref local="stockInfoTrigger"/>
+   		<ref local="MarketInformationDetailTrigger"/>
+  	    <ref local="RevenueTrigger"/> 
+      </list>
+    </property>
+  </bean>
+</beans>

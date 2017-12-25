@@ -1,0 +1,56 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class IntegralControllerTest extends ControllerTest{
+	
+	@Test
+	public void test1(){
+		String url = host+"integral/initintegral.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "1314");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test2(){
+		String url = host+"integral/getintegral.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10023");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test3(){
+		String url = host+"integral/consume.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("integralId", "10003");
+		map.put("tradeInfo", "lynn520");
+		map.put("tradeType", "6");
+		map.put("integralChange", "10");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test4(){
+		String url = host+"integral/gettradelist.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("integralId", "10000");
+		
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test5(){
+		String url = host+"integral/gettodaytradelist.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("integralId", "10003");
+		
+		System.out.println(doPost(url, map));
+	}
+	
+}

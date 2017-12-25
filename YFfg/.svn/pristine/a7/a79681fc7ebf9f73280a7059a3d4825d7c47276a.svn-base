@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.CouponMapper">
+
+	<resultMap  id="BaseResultMap" type="Coupon">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="coupon_value" property="couponValue" jdbcType="INTEGER" />
+		<result column="expire_time" property="expireTime" jdbcType="TIMESTAMP" />
+		<result column="use_time" property="useTime" jdbcType="TIMESTAMP" />
+		<result column="consume_info" property="consumeInfo" jdbcType="VARCHAR" />
+		<result column="consume_type" property="consumeType" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />		
+	</resultMap>
+	
+	<insert id="initCoupon" parameterType="Coupon">
+	insert into yfgp_coupon (user_id, coupon_value, expire_time, status) values (#{userId}, #{couponValue}, #{expireTime}, #{status})
+	<selectKey resultType="Integer" keyProperty="id" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+	
+	<update id="updateCoupon" parameterType="Coupon">
+	update yfgp_coupon set use_time = #{useTime}, consume_info = #{consumeInfo}, consume_type = #{consumeType}, status = #{status}
+	where user_id = #{userId} or id = #{id}
+	</update>
+	
+	<update id="updateCoupon2" parameterType="Coupon">
+	update yfgp_coupon set use_time = #{useTime}, consume_info = #{consumeInfo}, consume_type = #{consumeType}, status = #{status}
+	where id = #{id}
+	</update>
+	
+	<select id="getCoupon" parameterType="Coupon" resultMap="BaseResultMap">
+	select * from yfgp_coupon where user_id = #{userId} and expire_time > now() and status = 0;
+	</select>
+	
+	<select id="getCouponById" parameterType="Integer" resultMap="BaseResultMap">
+	select * from yfgp_coupon where id=#{id}
+	</select>
+</mapper>

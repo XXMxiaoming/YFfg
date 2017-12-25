@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yfwl.yfgp.dao.DynContentMapper" >
+  
+  <!-- 根据user_id查找好友动态 -->
+   <resultMap type="DynContent" id="BaseResultMap">
+  	<id column="con_id" property="conId" jdbcType="INTEGER" />
+    <result column="con_word" property="conWord" jdbcType="LONGVARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="publish_time" property="publishTime" jdbcType="TIMESTAMP" />
+    <result column="good_count" property="goodCount" jdbcType="INTEGER" />
+    <result column="forword_count" property="forwordCount" jdbcType="INTEGER" />
+    <result column="com_count" property="comCount" jdbcType="INTEGER" />
+	<result column="good_flag" property="goodFlag" jdbcType="INTEGER" />
+	<result column="parent_id" property="parentId" jdbcType="INTEGER" />
+	<result column="con_type" property="conType" jdbcType="INTEGER" />
+	<result column="status" property="status" jdbcType="INTEGER" />
+    
+    <association property="user" javaType="User">
+    	<id property="id" column="id"/>
+    	<result column="user_name" property="userName" jdbcType="VARCHAR" />
+    	<result column="password" property="password" jdbcType="CHAR" />
+    	<result column="phone" property="phone" jdbcType="VARCHAR" />
+    	<result column="easemob_id" property="easemobId" jdbcType="VARCHAR" />
+    	<result column="easemob_password" property="easemobPassword" jdbcType="VARCHAR"/>
+    	<result column="head_image" property="headImage" jdbcType="VARCHAR"/>
+    	<result column="user_sex" property="userSex" jdbcType="INTEGER" />
+    	<result column="user_level" property="userLevel" jdbcType="INTEGER" />
+    	<result column="user_status" property="userStatus" jdbcType="INTEGER" />
+	</association>
+	
+    <collection property="photoList" ofType="DynContentPhoto" column="con_id">
+		<id column="photo_id" property="photoId"/>
+		<result column="photo_address" property="photoAddress"/>
+	</collection> 
+  </resultMap>
+  
+  
+  <!-- 根据id删除动态 -->
+  <delete id="deleteOwnContent" parameterType="Integer">
+  	DELETE FROM yfgp_dyn_content WHERE con_id = #{id}  
+  </delete>
+  <delete id="deleteContentPhoto" parameterType="Integer">
+  	DELETE FROM yfgp_dyn_content_photo WHERE con_id = #{id}
+  </delete>
+  <delete id="deleteContentComment" parameterType="Integer">
+  	DELETE FROM yfgp_dyn_content_comment WHERE con_id = #{id}
+  </delete>
+  
+  <!-- 点赞数+1 -->
+  <update id="updateGoodCount" parameterType="Integer" >
+  	UPDATE yfgp_dyn_content SET good_count = good_count + 1 WHERE con_id = #{contentId}
+  </update>
+  
+  <!-- 点赞数-1 -->
+  <update id="cutGoodCount" parameterType="Integer" >
+  	UPDATE yfgp_dyn_content
+	SET 
+		good_count = good_count - 1
+	WHERE
+		con_id = #{contentId}
+	AND 
+		good_count > 0
+  </update>
+  
+  <!-- 点赞数查询 -->
+  <select id="selectGoodCount" parameterType="Integer" resultType="Integer">
+  	SELECT good_count from yfgp_dyn_content where con_id = #{contentId}
+  </select>
+  
+  <!-- 转发数+1 -->
+  <update id="updateForwordCount" parameterType="Integer">
+	UPDATE yfgp_dyn_content
+	SET forword_count = forword_count + 1
+	WHERE
+	<if test="_parameter >0" >
+		con_id = #{_parameter}  
+	</if>  
+  </update>
+  
+  <!-- 评论数+1 -->
+  <!-- <update id="updateComCount" parameterType="Integer">
+  	UPDATE yfgp_dyn_content SET com_count = com_count + 1 WHERE con_id = #{contentId}
+  </update> -->
+  
+   <!-- 评论数-1 -->
+  <!-- <update id="cutComCount" parameterType="Integer">
+  	UPDATE yfgp_dyn_content SET com_count = com_count - 1 WHERE con_id = #{contentId} AND com_count > 0
+  </update> -->
+  
+  <!-- 评论数查询 -->
+  <select id="selectComCount" parameterType="Integer" resultType="Integer">
+  	SELECT COUNT(*) FROM yfgp_dyn_content_comment WHERE con_id = #{contentId}
+  </select>
+  
+  <!-- 新增一条纯文字动态 -->
+  <insert id="addDynContentOnlyWord" useGeneratedKeys="true" keyProperty="conId" parameterType="DynContent" >
+	INSERT INTO yfgp_dyn_content (
+		con_word,
+		user_id,
+		publish_time,
+		good_count,
+		forword_count,
+		good_flag,
+		con_type,
+		status
+	)
+	VALUES
+		(#{conWord}, #{userId}, #{publishTime},0,0,0,#{conType},#{status})
+  </insert>
+  
+  
+  <insert id="insertDynContent" parameterType="DynContent">
+	INSERT INTO yfgp_dyn_content (
+		con_word,
+		user_id,
+		publish_time,
+		good_count,
+		forword_count,
+		good_flag,
+		parent_id,
+		con_type,
+		status
+	)
+	VALUES
+		(#{conWord}, #{userId}, #{publishTime},0,0,0, #{parentId}, #{conType},#{status})
+  </insert>
+  
+  
+  <!-- 好友动态查询 -->
+   <resultMap type="DynContent" id="BaseResultMap2">
+  	<id column="con_id" property="conId" jdbcType="INTEGER" />
+    <result column="con_word" property="conWord" jdbcType="LONGVARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="publish_time" property="publishTime" jdbcType="TIMESTAMP" />
+    <result column="good_count" property="goodCount" jdbcType="INTEGER" />
+    <result column="forword_count" property="forwordCount" jdbcType="INTEGER" />
+    <result column="com_count" property="comCount" jdbcType="INTEGER" />
+	<result column="good_flag" property="goodFlag" jdbcType="INTEGER" />
+	<result column="parent_id" property="parentId" jdbcType="INTEGER" />
+	<result column="con_type" property="conType" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <!-- 查好友动态 -->
+  <!-- <select id="selectFriendDynContent" resultMap="BaseResultMap2">
+	 SELECT
+	 	T.* ,
+		(SELECT COUNT(*) FROM yfgp_dyn_content_comment C WHERE C.con_id = T.con_id) AS com_count  
+	 FROM yfgp_dyn_content T WHERE
+	 T.status='0' and (		
+				EXISTS (
+					SELECT 1 FROM 
+					(SELECT friend_id AS user_id FROM yfgp_friend_relation WHERE user_id = #{userId} AND is_disabled = 'N'
+					UNION
+					SELECT att_user_id FROM yfgp_user_attention WHERE user_id = #{userId} AND is_disabled = 'N' ) A WHERE A.user_id = T.user_id
+				)			
+				AND NOT EXISTS (
+					SELECT 1 FROM
+					(SELECT user_id_meta AS user_id FROM yfgp_dyn_content_meta WHERE user_id = #{userId} AND meta_value IN ('1','3')
+					UNION								
+					SELECT user_id FROM yfgp_dyn_content_meta WHERE user_id_meta = #{userId} AND meta_value IN ('2','3')) B WHERE B.user_id = T.user_id
+				)						
+	  OR user_id = #{userId} Or user_id in ('32772','32774','12421','32788','35762')
+	  )
+		ORDER BY T.publish_time DESC
+		LIMIT ${pageCount},10  	
+  </select> -->
+  
+  <!-- 根据user_id查找自己动态 -->
+  <select id="selectOwnContent" resultMap="BaseResultMap2">
+	SELECT
+		T.*,
+		(SELECT COUNT(*) FROM yfgp_dyn_content_comment C WHERE C.con_id = T.con_id) AS com_count 
+	FROM
+		yfgp_dyn_content T
+	WHERE
+		T.user_id = #{userId} and T.status='0'
+	ORDER BY T.publish_time DESC
+	LIMIT ${pageCount},10
+  </select>
+  
+  
+  <!-- 根据userName查找动态 -->
+  <select id="selectDynContentByUserName" resultMap="BaseResultMap2">
+	SELECT 
+		T.* ,
+		(SELECT COUNT(*) FROM yfgp_dyn_content_comment C WHERE C.con_id = T.con_id) AS com_count  
+	FROM 
+		yfgp_dyn_content T
+	WHERE T.status='0' and T.user_id = (SELECT user_id FROM yfgp_user WHERE user_name = #{userName} )
+	ORDER BY T.publish_time DESC
+	LIMIT ${pageCount},10	
+  </select>
+  
+  
+  <select id="selectDynContentByConId" parameterType="Integer" resultMap="BaseResultMap2">
+	SELECT
+		T.* ,
+		(SELECT COUNT(*) FROM yfgp_dyn_content_comment C WHERE C.con_id = T.con_id) AS com_count  
+	FROM
+		yfgp_dyn_content T
+	WHERE
+		T.con_id = #{conId}
+  </select>
+  
+  
+  <select id="getDynCount" parameterType="Integer" resultType="Integer">
+  SELECT 
+  	count(*)
+  FROM 
+  	yfgp_dyn_content
+  WHERE
+  	user_id = #{userId}
+  </select>
+  
+  
+  <!-- 查好友动态 -->
+  <!-- <select id="selectNewFriendDynContent" resultMap="BaseResultMap2">
+	 SELECT
+	 	T.* ,
+		(SELECT COUNT(*) FROM yfgp_dyn_content_comment C WHERE C.con_id = T.con_id) AS com_count  
+	 FROM yfgp_dyn_content T WHERE 		
+				EXISTS (
+					SELECT 1 FROM 
+					(SELECT friend_id AS user_id FROM yfgp_friend_relation WHERE user_id = #{userId} AND is_disabled = 'N'
+					UNION
+					SELECT att_user_id FROM yfgp_user_attention WHERE user_id = #{userId} AND is_disabled = 'N' ) A WHERE A.user_id = T.user_id
+				)			
+				AND NOT EXISTS (
+					SELECT 1 FROM
+					(SELECT user_id_meta AS user_id FROM yfgp_dyn_content_meta WHERE user_id = #{userId} AND meta_value IN ('1','3')
+					UNION								
+					SELECT user_id FROM yfgp_dyn_content_meta WHERE user_id_meta = #{userId} AND meta_value IN ('2','3')) B WHERE B.user_id = T.user_id
+				)						
+	  OR user_id = #{userId} Or user_id in ('32772','32774','12421','32788','35762')
+		ORDER BY T.publish_time DESC
+		LIMIT ${pageCount},10  
+  </select> -->
+  
+  <!-- 根据user_id查找自己动态 -->
+  <select id="selectNewOwnContent" resultMap="BaseResultMap2">
+	SELECT
+		T.*,
+		(SELECT COUNT(*) FROM yfgp_dyn_content_comment C WHERE C.con_id = T.con_id) AS com_count 
+	FROM
+		yfgp_dyn_content T
+	WHERE
+		T.user_id = #{userId}
+	ORDER BY T.publish_time DESC
+	LIMIT ${pageCount},10
+  </select>
+  
+  
+  <!-- 根据userName查找动态 -->
+  <select id="selectNewDynContentByUserName" resultMap="BaseResultMap2">
+	SELECT 
+		T.* ,
+		(SELECT COUNT(*) FROM yfgp_dyn_content_comment C WHERE C.con_id = T.con_id) AS com_count  
+	FROM 
+		yfgp_dyn_content T
+	WHERE T.user_id = (SELECT user_id FROM yfgp_user WHERE user_name = #{userName} )
+	ORDER BY T.publish_time DESC
+	LIMIT ${pageCount},10	
+  </select>
+  
+  <!-- 查找符合要求的好友ID -->
+  <select id="getFriendId" parameterType="Integer" resultType="Integer">
+	SELECT user_id FROM 
+	(
+	SELECT
+		friend_id AS user_id
+	FROM
+		yfgp_friend_relation
+	WHERE
+		user_id = #{userId}
+	AND is_disabled = 'N'
+	UNION
+		SELECT
+			att_user_id
+		FROM
+			yfgp_user_attention
+		WHERE
+			user_id = #{userId}
+		AND is_disabled = 'N'
+	) A
+	WHERE
+	A.user_id NOT IN 
+	(
+	SELECT
+		user_id_meta AS user_id
+	FROM
+		yfgp_dyn_content_meta
+	WHERE
+		user_id = #{userId}
+	AND meta_value = 3
+	UNION
+		SELECT
+			user_id
+		FROM
+			yfgp_dyn_content_meta
+		WHERE
+			user_id_meta = #{userId}
+		AND meta_value = 2
+	)   
+  </select>
+  
+  <select id="selectFriendDynContent" resultMap="BaseResultMap2">
+	SELECT
+		T.*,
+		(
+			SELECT
+				COUNT(*)
+			FROM
+				yfgp_dyn_content_comment C
+			WHERE
+				C.con_id = T.con_id
+		) AS com_count
+	FROM
+		yfgp_dyn_content T
+	WHERE
+		user_id IN 
+	<foreach collection="list" item="item" index="index" open="(" close=")" separator="," >
+		#{item}
+	</foreach>	 
+	 ORDER BY T.publish_time DESC
+		LIMIT #{pageCount},10  
+  </select>
+  
+  <select id="selectNewFriendDynContent" resultMap="BaseResultMap2">
+	SELECT
+		T.*,
+		(
+			SELECT
+				COUNT(*)
+			FROM
+				yfgp_dyn_content_comment C
+			WHERE
+				C.con_id = T.con_id
+		) AS com_count
+	FROM
+		yfgp_dyn_content T
+	WHERE
+		user_id IN 
+	<foreach collection="list" item="item" index="index" open="(" close=")" separator="," >
+		#{item}
+	</foreach>	 
+	 ORDER BY T.publish_time DESC
+		LIMIT #{pageCount},#{pageSize}
+  </select>
+  
+  
+</mapper>

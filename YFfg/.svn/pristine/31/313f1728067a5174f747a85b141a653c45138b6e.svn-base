@@ -1,0 +1,23 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class MessageControllerTest extends ControllerTest{
+	
+	@Test
+	public void test1(){
+		String url = host+"message/sendMassMessage.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("message", "唐有炜");
+		map.put("adminId", "85");
+		map.put("userIds", "81,83");
+		
+		HashMap<String, String> headMap = new HashMap<String, String>();
+		headMap.put("Authorization", "28349cd2226f305e0b1ed3b72793cefb");
+		System.out.println(doPost(url, map, headMap));
+	}
+}

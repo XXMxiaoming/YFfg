@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.ContactMapper">
+
+	<resultMap  id="BaseResultMap" type="Contact">
+		<id column="contact_id" property="contactId" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR" />
+		<result column="contact_way" property="contactWay" jdbcType="VARCHAR" />
+		<result column="contact_info" property="info" jdbcType="VARCHAR" />
+		<result column="add_time" property="timeDate" jdbcType="TIMESTAMP" />
+		<result column="photo_type" property="photoType" jdbcType="INTEGER" />		
+	</resultMap>
+	
+	<insert id="insert" parameterType="Contact">
+	INSERT INTO yfgp_contact (
+		user_id,
+		contact_way,
+		contact_info,
+		add_time
+	)
+	VALUES(
+		#{userId}, 
+		#{contactWay}, 
+		#{info}, 
+		#{timeDate})
+  </insert>
+	
+	
+</mapper>

@@ -1,0 +1,46 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class DynContentCommentControllerTest extends ControllerTest {
+	
+	@Test
+	public void test1() throws UnsupportedEncodingException{
+		String url = host+"dyncontentcomment/insertComment.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("contentId", "271");
+		map.put("userId", "85");
+		String s = "代开发票好的成人电影你好习近平啊啊啊";
+		map.put("comContent", URLEncoder.encode(s, "utf-8"));
+		map.put("token", "1A140EB13538403BAC9B49A520A36ADC2015102217140800929833");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test2() throws UnsupportedEncodingException{
+		String url = host+"future/contactus.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("contactWay", "110");
+		map.put("info", "我已经报警了");
+		map.put("userId", "85");
+		map.put("token", "E7B6E02220D84EEBA4FDEE1575A508CB2015112514445812818868");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test3() {
+		String url = host+"dyncontentcomment/deleteComment.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("contentId", "3010");
+		map.put("comId", "652");
+		
+		System.out.println(doPost(url, map));
+	}
+	
+}

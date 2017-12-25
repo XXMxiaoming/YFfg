@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.StrategyMapper">
+
+	<resultMap  id="BaseResultMap" type="Strategy">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="stock_name" property="stock_name" jdbcType="VARCHAR" />
+		<result column="stock_id" property="stock_id" jdbcType="VARCHAR" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="created_at" property="created_at" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updated_at" jdbcType="TIMESTAMP" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+	</resultMap>
+	
+
+	
+	<select id="getAllStrategy"  resultMap="BaseResultMap">
+	select * from yfgp_strategy where status = 0 and type=#{type};
+	</select>
+	
+	<update id="deleteAllStrategy">
+	update yfgp_strategy set status = 1, updated_at=now() where status = 0 and type=#{type};
+	</update>
+	
+	<insert id="insertStrategy" parameterType="Strategy">
+	insert into yfgp_strategy (stock_name, stock_id, price, created_at, updated_at,type, status)
+	values(#{stock_name},#{stock_id},#{price},now(),now(),#{type},0)
+		<selectKey resultType="Integer" keyProperty="id" >  
+	        select @@IDENTITY  
+	    </selectKey>
+	</insert>
+</mapper>

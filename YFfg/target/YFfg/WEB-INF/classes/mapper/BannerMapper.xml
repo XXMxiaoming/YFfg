@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.BannerMapper">
+	
+	<resultMap type="Banner" id="BaseResultMap">
+		<id column="banner_id" property="bannerId" jdbcType="INTEGER" />
+		<result column="banner_pic_url" property="bannerPicUrl" jdbcType="VARCHAR" />
+		<result column="sequence" property="sequence" jdbcType="INTEGER" />
+		<result column="click_url" property="clickUrl" jdbcType="VARCHAR" />
+		<result column="add_time" property="addTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<select id="selectBanner" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT
+			banner_id,
+			banner_pic_url,
+			sequence,
+			click_url,
+			add_time
+		FROM
+			yfgp_banner
+		WHERE
+			sequence = #{sequence}
+		ORDER BY
+			add_time DESC
+		LIMIT 1	
+	</select>
+	
+</mapper>

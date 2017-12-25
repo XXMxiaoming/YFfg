@@ -1,0 +1,35 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class RiskAssessControllertTest extends ControllerTest{
+	
+	@Test
+	public void test1(){
+		String url = host+"riskassess/getAssessResult.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("options","进取型");
+		map.put("userId", "10124");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test2(){
+		String url = host+"riskassess/getQuestion.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("", "");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test3(){
+		String url = host+"riskassess/checkIsAssessed.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10045");
+		System.out.println(doPost(url, map));
+	}
+}

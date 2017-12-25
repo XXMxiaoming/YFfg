@@ -1,0 +1,24 @@
+package com.yfwl.yfgp.dao1;
+
+import java.util.List;
+
+import com.yfwl.yfgp.model.FuturesShares;
+
+public interface FuturesSharesMapper {
+
+	public Integer insertFuturesShares(FuturesShares futuresShares);
+
+	// 获取云南白药的最后一条数据
+
+	public FuturesShares getLastSameName();
+
+	// 获取国金证券的最后一条数据
+	public FuturesShares getLastSameName2();
+	
+	//查询所有股票的记录
+	public List<FuturesShares> getAllShares();
+	
+	//查询所有期货的记录
+	public List<FuturesShares> getAllFutures();
+		
+}

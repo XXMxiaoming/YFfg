@@ -1,0 +1,45 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class ChatRoomControllerTest extends ControllerTest{
+	
+	@Test
+	public void test1(){
+		String url = host+"chatroom/getSYCR.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("", "");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test2(){
+		String url = host+"chatroom/getCRSimpleInfo.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("pageNow", "1");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test3(){
+		String url = host+"chatroom/createCR.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("name", "杰西利佛莫尔001");
+		map.put("desc", "聊天室");
+		map.put("owner", "0se6vzd");
+		map.put("members", "1e7aswy,3bx4fzxt");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test4(){
+		String url = host+"chatroom/getSingleRoomDetail.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("roomId", "179753894849544664");
+		System.out.println(doPost(url, map));
+	}
+}

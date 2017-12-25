@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.ScoreMapper">
+
+	<resultMap  id="BaseResultMap" type="Score">
+		<id column="rid" property="rid" jdbcType="INTEGER" />
+		<result column="gid" property="gid" jdbcType="INTEGER" />
+		<result column="total" property="total" jdbcType="INTEGER" />
+		<result column="date" property="date" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<select id="getScore" parameterType="Score" resultMap="BaseResultMap">
+	select * from score where rid = #{rid};
+	</select>
+	
+	<select id="getScoreList" parameterType="Score" resultMap="BaseResultMap">
+	select * from score where gid=#{gid} limit 0,250;
+	</select>
+	
+	<insert id="initScore" parameterType="Score">
+	insert into score (gid, total, date) values (#{gid}, #{total}, #{date}) 
+	</insert>
+	
+	<!-- 2016-08-05 获取七日收益的最近7七天数据 -->
+	<select id="getR7dayScoreList" parameterType="Score" resultMap="BaseResultMap">
+	SELECT * FROM score where  gid = #{gid} order by date desc limit 7;
+	</select>
+
+	<select id="getr7Score" parameterType="Score" resultMap="BaseResultMap">
+	SELECT * FROM score where DATE(date) >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) and gid = #{gid} limit 1;
+	</select>
+
+	<select id="getr30Score" parameterType="Score" resultMap="BaseResultMap">
+	select * from score where DATE(date) >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) and gid = #{gid} limit 1;
+	</select>
+	
+	<!-- 2016-08-06 获取30日收益的最近30天数据 -->
+	<select id="getR30dayScoreList" parameterType="Score" resultMap="BaseResultMap">
+	SELECT * FROM score where  gid = #{gid} order by date desc limit 30;
+	</select>
+	
+	<select id="getr6mScore" parameterType="Score" resultMap="BaseResultMap">
+	select * from score where DATE(date) >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) and gid = #{gid} limit 1;
+	</select>
+	
+	<!-- 2016-08-06 获取60日收益的最近60天数据 -->
+	<select id="getR60dayScoreList" parameterType="Score" resultMap="BaseResultMap">
+	SELECT * FROM score where  gid = #{gid} order by date desc limit 60;
+	</select>
+	
+	<select id="getr1yScore" parameterType="Score" resultMap="BaseResultMap">
+	select * from score where DATE(date) >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR) and gid = #{gid} limit 1;
+	</select>
+	
+	<!-- 2016-08-06 获取1年收益的最近1年(360天)数据 -->
+	<select id="getR1yearScoreList" parameterType="Score" resultMap="BaseResultMap">
+	SELECT * FROM score where  gid = #{gid} order by date desc limit 360;
+	</select>
+	
+	<select id="getr7ScoreList" parameterType="Score" resultMap="BaseResultMap">
+	SELECT * FROM score where DATE(date) >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) and gid = #{gid};
+	</select>
+
+	<select id="getr30ScoreList" parameterType="Score" resultMap="BaseResultMap">
+	select * from score where DATE(date) >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) and gid = #{gid};
+	</select>
+	
+	<select id="getr1mScoreList" parameterType="Score" resultMap="BaseResultMap">
+	select * from score where DATE(date) >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) and gid = #{gid};
+	</select>
+	
+	<select id="getr1yScoreList" parameterType="Score" resultMap="BaseResultMap">
+	select * from score where DATE(date) >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR) and gid = #{gid};
+	</select>
+	
+	
+	<select id="getLastScore" parameterType="Score" resultMap="BaseResultMap">
+	select * from score where gid=#{gid} order by date desc limit 1;
+	</select>
+	
+</mapper>

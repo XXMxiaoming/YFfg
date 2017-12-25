@@ -1,0 +1,45 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class ArticleCommentControllerTest extends ControllerTest {
+	
+	@Test
+	public void test1() throws UnsupportedEncodingException{
+		String url = host+"articlecomment/insertcomment.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("articleId", "100828");
+		map.put("userId", "64");
+		map.put("parentId", "42");
+		String s = "评论内容";
+		map.put("commentContent", s);
+		map.put("token", "1A140EB13538403BAC9B49A520A36ADC2015102217140800929833");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test2() throws UnsupportedEncodingException{
+		String url = host+"articlecomment/getcomment.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("articleId", "100868");
+		map.put("pageNow", "1");
+		map.put("userId", "10020");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test3() throws UnsupportedEncodingException{
+		String url = host+"praise/praise.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("praiseContent", "100828");
+		map.put("contentType", "2");
+		map.put("userId", "64");
+		System.out.println(doPost(url, map));
+	}
+}

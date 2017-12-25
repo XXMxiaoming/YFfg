@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite tests="7" failures="0" name="controllertest.GentouTest" time="1.187" errors="0" skipped="0">
+  <properties>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="sun.boot.library.path" value="E:\install\jdk1.8_73\JRE1.8_73\bin"/>
+    <property name="java.vm.version" value="25.73-b02"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="path.separator" value=";"/>
+    <property name="guice.disable.misplaced.annotation.check" value="true"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="user.script" value=""/>
+    <property name="user.country" value="CN"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="C:\Users\xxm\.git\YFfg"/>
+    <property name="java.runtime.version" value="1.8.0_73-b02"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
+    <property name="java.endorsed.dirs" value="E:\install\jdk1.8_73\JRE1.8_73\lib\endorsed"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.io.tmpdir" value="C:\Users\xxm\AppData\Local\Temp\"/>
+    <property name="line.separator" value="
+"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="user.variant" value=""/>
+    <property name="os.name" value="Windows 10"/>
+    <property name="classworlds.conf" value="E:\work_space\yfwl\.metadata\.plugins\org.eclipse.m2e.launching\launches\m2conf7215074047824927335.tmp"/>
+    <property name="sun.jnu.encoding" value="GBK"/>
+    <property name="java.library.path" value="E:\install\jdk1.8_73\JRE1.8_73\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;E:/install/jdk1.8_73/JRE1.8_73/bin/server;E:/install/jdk1.8_73/JRE1.8_73/bin;E:/install/jdk1.8_73/JRE1.8_73/lib/amd64;c:\gtk\bin;C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;E:\install\jdk1.8_73\bin;E:\install\jdk1.8_73\jre\bin;E:\apache-maven-3.3.3-bin\apache-maven-3.3.3\bin;E:\install\mysql-5.7.12-winx64\bin;E:\install\nodejs\;E:\install\wamp\bin\php\php5.5.12;C:\ProgramData\ComposerSetup\bin;C:\Users\Lzq\AppData\Roaming\npm;C:\Users\Lzq\AppData\Roaming\Composer\vendor\bin;D:\git\Git\cmd;F:\python;C:\Users\Lzq\AppData\Roaming\npm;C:\Users\Lzq\AppData\Roaming\Composer\vendor\bin;E:\eclipse-jee-luna-SR2-win32-x86_64\eclipse;;."/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="52.0"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="os.version" value="10.0"/>
+    <property name="user.home" value="C:\Users\xxm"/>
+    <property name="user.timezone" value="Asia/Shanghai"/>
+    <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
+    <property name="java.specification.version" value="1.8"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="user.name" value="xxm"/>
+    <property name="java.class.path" value="/E:/eclipse-jee-luna-SR2-win32-x86_64/eclipse/plugins/org.eclipse.m2e.maven.runtime_1.5.1.20150109-1819/jars/plexus-classworlds-2.5.1.jar"/>
+    <property name="org.slf4j.simpleLogger.defaultLogLevel" value="info"/>
+    <property name="java.vm.specification.version" value="1.8"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.home" value="E:\install\jdk1.8_73\JRE1.8_73"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -B install"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="user.language" value="zh"/>
+    <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.8.0_73"/>
+    <property name="java.ext.dirs" value="E:\install\jdk1.8_73\JRE1.8_73\lib\ext;C:\Windows\Sun\Java\lib\ext"/>
+    <property name="sun.boot.class.path" value="E:\install\jdk1.8_73\JRE1.8_73\lib\resources.jar;E:\install\jdk1.8_73\JRE1.8_73\lib\rt.jar;E:\install\jdk1.8_73\JRE1.8_73\lib\sunrsasign.jar;E:\install\jdk1.8_73\JRE1.8_73\lib\jsse.jar;E:\install\jdk1.8_73\JRE1.8_73\lib\jce.jar;E:\install\jdk1.8_73\JRE1.8_73\lib\charsets.jar;E:\install\jdk1.8_73\JRE1.8_73\lib\jfr.jar;E:\install\jdk1.8_73\JRE1.8_73\classes"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="maven.home" value="C:\Users\xxm\.git\YFfg\EMBEDDED"/>
+    <property name="file.separator" value="\"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="sun.desktop" value="windows"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+  </properties>
+  <testcase classname="controllertest.GentouTest" name="test103" time="0.246"/>
+  <testcase classname="controllertest.GentouTest" name="test106" time="0.008"/>
+  <testcase classname="controllertest.GentouTest" name="test107" time="0.003"/>
+  <testcase classname="controllertest.GentouTest" name="yao" time="0.009"/>
+  <testcase classname="controllertest.GentouTest" name="test1" time="0.063"/>
+  <testcase classname="controllertest.GentouTest" name="test2" time="0.85"/>
+  <testcase classname="controllertest.GentouTest" name="test6" time="0.008"/>
+</testsuite>

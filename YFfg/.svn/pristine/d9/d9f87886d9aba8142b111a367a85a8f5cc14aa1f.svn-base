@@ -1,0 +1,11 @@
+package com.yfwl.yfgp.dao1;
+
+import com.yfwl.yfgp.model.incomeLoss;
+
+public interface IncomeLossMapper {
+	incomeLoss getincomeLoss(Integer userid);
+	
+	Integer insertIncomeLoss(incomeLoss inlo);
+	
+	Integer deleteIncomeLoss(Integer userid);
+}

@@ -1,0 +1,21 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class AddUserTest extends ControllerTest{
+
+	public static void main(String[] args){
+		
+		for(int i=0; i<=500; i++){
+			
+			/*String url = host+"user2/insertUser.do";
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("", "");
+			System.out.println(doPost(url, map));*/
+		}
+		
+	}
+	
+}

@@ -1,0 +1,40 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class FriendRelationControllerTest extends ControllerTest{
+	
+	@Test
+	public void test1(){
+		String url = host+"friendRelation/insertFriend.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("loginName", "A");
+		map.put("searchName", "B");
+		map.put("token", "Atoken");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test2(){
+		String url = host+"friendRelation/deleteFriend.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("user", "A");
+		map.put("friend", "B");
+		map.put("token", "Atoken");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test3(){
+		String url = host+"friendRelation/searchUser.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("searchName", "A");
+		map.put("pageNow", "1");
+		System.out.println(doPost(url, map));
+	}
+	
+}

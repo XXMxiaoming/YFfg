@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+ 
+ <mapper namespace="com.yfwl.yfgp.dao1.EverydayincomeMapper">
+
+	<resultMap  id="BaseResultMap" type="Everydayincome">
+		<id column="shares" property="shares" jdbcType="DECIMAL" />
+		<result column="bond" property="bond" jdbcType="DECIMAL" />
+		<result column="futures" property="futures" jdbcType="DECIMAL" />
+		<result column="cash" property="cash" jdbcType="DECIMAL" />
+		<result column="totalassets" property="totalassets" jdbcType="DECIMAL" />
+		<result column="userid" property="userid" jdbcType="INTEGER" />
+		<result column="date" property="date" jdbcType="TIMESTAMP"/>		
+	</resultMap>
+	
+	<insert id="insertEverydayincome" parameterType="Everydayincome" >
+	insert into everydayincome (bond,futures,cash,shares,date,userid,totalassets) values(#{bond},#{futures},#{cash},#{shares},SYSDATE(),#{userid},#{totalassets})
+	</insert>
+	
+	
+	<select id="getAllEverydayincome" resultMap="BaseResultMap">
+	select * from everydayincome  
+	</select>
+	
+	<update id="updateEverydayincome" parameterType="Everydayincome">
+	update everydayincome set totalassets=#{totalassets} where userid=#{userid}
+	</update>
+	
+	<select id="getDisEverydayincome" resultMap="BaseResultMap">
+	select DISTINCT * from everydayincome A  where date=(select max(date) from everydayincome B where A.userid=B.userid)
+	</select>
+	
+	<select id="getAllEverydayincomeByUserid" parameterType="Integer" resultMap="BaseResultMap">
+	SELECT * from everydayincome where userid=#{userid}
+	</select>
+
+	<delete id="deleteEverydayincome" parameterType="Integer">
+	delete  from everydayincome where userid=#{userid}
+	</delete>
+	</mapper>

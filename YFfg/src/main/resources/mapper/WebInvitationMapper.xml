@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.WebInvitationMapper">
+
+	<resultMap  id="BaseResultMap" type="WebInvitation">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="user_id" jdbcType="INTEGER" />
+		<result column="invitation_code" property="invitation_code" jdbcType="VARCHAR" />
+		<result column="fill_code" property="fill_code" jdbcType="VARCHAR" />
+		<result column="count" property="count" jdbcType="INTEGER" />
+		<result column="created_at" property="created_at" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updated_at" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="INTEGER" />		
+	</resultMap>
+	
+	<insert id="initWebInvitation" parameterType="WebInvitation">
+	insert into yfgp_web_invitation (user_id, invitation_code, created_at, status) values (#{user_id}, #{invitation_code}, now(), #{status})
+	<selectKey resultType="Integer" keyProperty="id" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+	
+	<update id="updateWebInvitation" parameterType="WebInvitation">
+	update yfgp_web_invitation set fill_code = #{fill_code}, count = #{count}, updated_at = now(), status = #{status}
+	where user_id = #{userId}
+	</update>
+	
+	<select id="getWebInvitation" parameterType="WebInvitation" resultMap="BaseResultMap">
+	select * from yfgp_web_invitation where user_id = #{user_id} or invitation_code = #{invitation_code} limit 1;
+	</select>
+
+	
+</mapper>

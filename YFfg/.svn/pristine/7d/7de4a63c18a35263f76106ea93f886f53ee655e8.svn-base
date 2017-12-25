@@ -1,0 +1,7 @@
+package com.yfwl.yfgp.service;
+
+import com.yfwl.yfgp.model.Accounts;
+
+public interface AccountsService {
+	Accounts getAccountsExist(int userid);
+}

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yfwl.yfgp.dao.UserAttentionMapper" >
+
+	<resultMap type="UserAttention" id="BaseResultMap">
+  		<id column="attention_id" property="attentionId" jdbcType="INTEGER" />
+  		<result column="user_id" property="userId" jdbcType="INTEGER" />
+  		<result column="att_user_id" property="attUserId" jdbcType="INTEGER" />
+  		<result column="add_time" property="addTime" jdbcType="TIMESTAMP"/>
+		<result column="is_first" property="isFirst" jdbcType="VARCHAR"/>
+		<result column="is_disabled" property="isDisabled" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<resultMap id="UserResultMap" type="User" > 
+    	<id column="user_id" property="userId" jdbcType="INTEGER" />
+    	<result column="user_name" property="userName" jdbcType="VARCHAR" />
+    	<result column="password" property="password" jdbcType="CHAR" />
+    	<result column="phone" property="phone" jdbcType="VARCHAR" />
+    	<result column="easemob_id" property="easemobId" jdbcType="VARCHAR" />
+    	<result column="easemob_password" property="easemobPassword" jdbcType="VARCHAR"/>
+    	<result column="head_image" property="headImage" jdbcType="VARCHAR"/>
+    	<result column="user_sex" property="userSex" jdbcType="INTEGER" />
+    	<result column="user_level" property="userLevel" jdbcType="INTEGER" />
+    	<result column="user_status" property="userStatus" jdbcType="INTEGER" />
+   		<result column="user_title" property="userTitle" jdbcType="VARCHAR"/>
+    	<result column="user_brief" property="userBrief" jdbcType="VARCHAR"/>
+  	</resultMap>
+	
+	<!-- 检测是不是第一次用关注功能-->
+	<select id="checkIsFirst" parameterType="Integer" resultType="Integer">
+		SELECT
+			COUNT(user_id)
+		FROM
+			yfgp_user_attention
+		WHERE
+			user_id = #{userId}	
+	</select>
+	
+	<!-- 查询是否已经关注过 -->
+	<select id="selectIsAttention" resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+			yfgp_user_attention
+		WHERE
+			user_id = #{userId}
+		AND att_user_id = (
+			SELECT
+				user_id
+			FROM
+				yfgp_user
+			WHERE
+				user_name = #{attUserName}
+		)	
+	</select>
+	
+	<!-- 第一次关注此人 -->
+	<insert id="insertAttention" >
+		INSERT INTO yfgp_user_attention (user_id, att_user_id,add_time,is_first,is_disabled)
+		VALUES
+			(
+				#{userId},
+				(
+					SELECT
+						user_id
+					FROM
+						yfgp_user
+					WHERE
+						user_name = #{attUserName}
+				),
+				SYSDATE(),
+				#{isFirst},
+				'N'
+			)	
+	</insert>
+	<!-- 之前关注过，但取消了，现在重新关注 -->
+	<update id="insertAttentionAgain">
+		UPDATE yfgp_user_attention
+		SET is_disabled = 'N'
+		WHERE
+			user_id = #{userId}
+		AND att_user_id = (
+			SELECT
+				user_id
+			FROM
+				yfgp_user
+			WHERE
+				user_name = #{attUserName}
+		)		
+	</update>
+	
+	<!-- 取消关注此人 -->
+	<update id="deleteAttention">
+		UPDATE yfgp_user_attention
+		SET is_disabled = 'Y'
+		WHERE
+			user_id = #{userId}
+		AND att_user_id = (
+			SELECT
+				user_id
+			FROM
+				yfgp_user
+			WHERE
+				user_name = #{attUserName}
+		)		
+	</update>
+	
+	<!-- 获取我关注的人 -->
+	<select id="getMyAttentionList" resultMap="UserResultMap">
+		select *
+		from yfgp_user 
+		where user_id in (
+			select att_user_id
+			from yfgp_user_attention
+			where user_id = #{userId}
+			and is_disabled = 'N'
+			
+		)
+		LIMIT #{pageCount},25 
+	</select>
+	
+	<!-- 获取关注我的人 -->
+	<select id="getAttentMineList" resultMap="UserResultMap">
+		select *
+		from yfgp_user 
+		where user_id in (
+			select user_id
+			from yfgp_user_attention
+			where att_user_id=#{userId}
+			and is_disabled = 'N'
+			
+		)
+		LIMIT #{pageCount},25 
+	</select>
+	
+	<!-- 获取我关注的人 数-->
+	<select id="getMyAttentionCount" parameterType="Integer" resultType="Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			(
+				SELECT
+					user_id
+				FROM
+					yfgp_user_attention
+				WHERE
+					user_id = #{userId}
+				AND is_disabled = 'N'
+				GROUP BY
+					att_user_id
+			) A
+	</select>
+	
+	<!-- 获取关注我的人 数-->
+	<select id="getAttentMineCount" parameterType="Integer" resultType="Integer">
+		SELECT
+			COUNT(*)
+		FROM
+		(
+				SELECT
+					user_id
+				FROM
+					yfgp_user_attention
+				WHERE
+					att_user_id =  #{userId}
+				AND is_disabled = 'N'
+				GROUP BY
+					user_id
+		) A
+	</select>
+	
+	<select id="getAttentRelation" parameterType="UserAttention" resultType="Integer">
+	select count(*) from yfgp_user_attention where user_id = #{userId} and att_user_id = #{attUserId} and is_disabled = 'N'
+	</select>
+	
+	
+</mapper>

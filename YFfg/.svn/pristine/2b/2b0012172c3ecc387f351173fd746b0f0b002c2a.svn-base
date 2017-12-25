@@ -1,0 +1,20 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class UserLogControllerTest extends ControllerTest{
+	
+	@Test
+	public void test1(){
+		String url = host+"userlog/setUserLog.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "234");
+		map.put("deviceUuid", "1255pp");
+		System.out.println(doPost(url, map));
+	}
+
+}

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.ArticleMapper">
+
+	<resultMap  id="BaseResultMap" type="Article">
+		<id column="article_id" property="articleId" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="abstract" property="artAbstract" jdbcType="VARCHAR" />
+		<result column="source" property="source" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="add_time" property="addTime" jdbcType="TIMESTAMP" />
+		<result column="photo_type" property="photoType" jdbcType="INTEGER" />
+		<result column="html_url" property="htmlUrl" jdbcType="VARCHAR" /> 
+		<result column="source_url" property="sourceUrl" jdbcType="VARCHAR" /> 
+		<result column="comment_count" property="commentCount" jdbcType="INTEGER" />
+		<result column="is_stick" property="isStick" jdbcType="VARCHAR" />
+		<result column="author" property="author" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		
+		<collection property="articlePhoto" ofType="ArticlePhoto" column="article_id">
+			<result column="photo_url" property="photoUrl" jdbcType="VARCHAR"/>
+		</collection>		
+	</resultMap>
+	
+	
+	<!-- 更新过期置顶资讯状态 -->
+	<update id="updateArtStickStatus" parameterType="String">
+		UPDATE yfgp_article A SET A.is_stick = 0 WHERE A.is_stick=1 AND A.type = #{type} AND A.`status` = '已发布' AND NOT EXISTS (
+			SELECT 1 FROM
+ 				(SELECT article_id FROM yfgp_article WHERE is_stick=1 AND type = #{type} AND `status` = '已发布' ORDER BY add_time DESC LIMIT 2 ) B  WHERE A.article_id = B.article_id
+		)
+	</update>	
+	
+	<!-- 查询头条列表 -->
+	<select id="selectBigNewsList" resultMap="BaseResultMap" >
+		SELECT
+			A.article_id,
+			A.title,
+			A.add_time,
+			A.source,
+			A.photo_type,
+			A.html_url,
+			A.type,
+			A.source_url,
+			A.`status`,
+			P.photo_url
+		FROM
+			yfgp_article A,
+			yfgp_article_photo P
+		WHERE
+			A.article_id = P.article_id
+		AND A.type = '头条'
+		AND A.`status` = '已发布'
+		ORDER BY
+			add_time DESC
+		LIMIT 5		
+	</select>
+	
+	<!-- <update id="increaseCommentCount" parameterType="Integer">
+	update yfgp_article set comment_count = comment_count + 1 where article_id = #{articleId}
+	</update> -->
+	
+	<select id="getArticle" parameterType="Integer" resultMap="BaseResultMap">
+	<!-- select yfgp_article.*, yfgp_article_photo.photo_url from yfgp_article left join yfgp_article_photo on yfgp_article.article_id = yfgp_article_photo.article_id 
+	where yfgp_article.article_id = #{articleId}  -->
+	
+		SELECT
+			A.*, 
+		(SELECT COUNT(C.article_id) FROM yfgp_article_comment C WHERE A.article_id = C.article_id ) AS comment_count,
+		(SELECT P.photo_url FROM yfgp_article_photo P WHERE A.article_id = P.article_id LIMIT 1) AS photo_url
+		FROM
+			yfgp_article A
+		WHERE
+			A.article_id = #{articleId}
+	</select>
+	
+	<select id="selectArticleById" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT
+			title,
+			abstract,
+			source,
+			author,
+			html_url
+		FROM
+			yfgp_article
+		WHERE
+			article_id = #{articleId}
+	</select>
+	
+	
+	
+	<resultMap  id="BaseResultMap2" type="Article">
+		<id column="article_id" property="articleId" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="abstract" property="artAbstract" jdbcType="VARCHAR" />
+		<result column="source" property="source" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="add_time" property="addTime" jdbcType="TIMESTAMP" />
+		<result column="photo_type" property="photoType" jdbcType="INTEGER" />
+		<result column="html_url" property="htmlUrl" jdbcType="VARCHAR" /> 
+		<result column="source_url" property="sourceUrl" jdbcType="VARCHAR" /> 
+		<result column="comment_count" property="commentCount" jdbcType="INTEGER" />
+		<result column="is_stick" property="isStick" jdbcType="VARCHAR" />
+		<result column="author" property="author" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 查询资讯列表 -->
+	<select id="selectNewsList" resultMap="BaseResultMap2">
+		SELECT
+			A.article_id,
+			A.title,
+			A.add_time,
+			A.source,
+			A.photo_type,
+			A.html_url,
+			A.type,
+			A.is_stick,
+			(SELECT COUNT(C.article_id) FROM yfgp_article_comment C WHERE A.article_id = C.article_id ) AS comment_count,
+			A.source_url,
+			A.`status`
+		FROM
+			yfgp_article A
+		WHERE
+			A.type = #{type}
+		AND A.is_stick = 0
+		AND A.`status` = '已发布'
+		ORDER BY
+			A.add_time DESC
+		LIMIT #{pageCount},20	
+	</select>
+	<!-- 查置顶资讯 -->
+	<select id="selectStickNews" resultMap="BaseResultMap2">
+		SELECT
+			A.article_id,
+			A.title,
+			A.add_time,
+			A.source,
+			A.photo_type,
+			A.html_url,
+			A.type,
+			A.is_stick,
+			(SELECT COUNT(C.article_id) FROM yfgp_article_comment C WHERE A.article_id = C.article_id ) AS comment_count,
+			A.source_url,
+			A.`status`
+		FROM
+			yfgp_article A
+		WHERE
+			A.type = #{type}
+		AND A.is_stick = 1
+		AND A.`status` = '已发布'
+		ORDER BY
+			A.add_time DESC
+		LIMIT 2	
+	</select>	
+	
+</mapper>

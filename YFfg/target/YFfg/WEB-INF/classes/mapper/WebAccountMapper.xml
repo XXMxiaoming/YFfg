@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.WebAccountMapper">
+
+	<resultMap  id="BaseResultMap" type="WebAccount">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="user_id" jdbcType="INTEGER" />
+		<result column="point" property="point" jdbcType="INTEGER" />
+		<result column="created_at" property="created_at" jdbcType="TIMESTAMP" />
+		<result column="updated_at" property="updated_at" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="INTEGER" />		
+	</resultMap>
+	
+	<insert id="initWebAccount" parameterType="WebAccount">
+	insert into yfgp_web_accounts (user_id, point, created_at, status) values (#{user_id}, #{point}, now(), #{status})
+	<selectKey resultType="Integer" keyProperty="id" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+	
+	<update id="updateWebAccount" parameterType="WebAccount">
+	update yfgp_web_accounts set point = #{point}, updated_at = now()
+	where user_id = #{userId}
+	</update>
+	
+	<select id="getWebAccount" parameterType="WebAccount" resultMap="BaseResultMap">
+	select * from yfgp_web_accounts where user_id = #{user_id} limit 1;
+	</select>
+
+	
+</mapper>

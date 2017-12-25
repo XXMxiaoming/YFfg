@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.CashAccountMapper">
+
+	<resultMap  id="BaseResultMap" type="CashAccount">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="total_cash" property="totalCash" jdbcType="DECIMAL" />
+		<result column="time_till" property="timeTill" jdbcType="TIMESTAMP" />
+		<result column="attach_account" property="attachAccount" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />		
+	</resultMap>
+	
+	<insert id="initCashAccount" parameterType="CashAccount">
+	insert into yfgp_account(user_id, total_cash, time_till, status) values (#{userId}, #{totalCash}, #{timeTill}, #{status})
+	<selectKey resultType="Integer" keyProperty="id" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+	
+	<update id="updateCashAccount" parameterType="CashAccount">
+	update yfgp_account set password=#{password},total_cash = #{totalCash}, time_till = #{timeTill} ,attach_account=#{attachAccount}, status=#{status} where user_id = #{userId}
+	</update>
+
+	<select id="getCashAccount" parameterType="CashAccount">
+	select * from yfgp_account where id=#{id} or user_id = #{userId}
+	</select>
+	
+	<select id="getCashAccountByUserId" parameterType="Integer" resultMap="BaseResultMap">
+	select * from yfgp_account where user_id = #{userId}
+	</select>
+	
+	<insert id="initCashAccountByUserId" parameterType="CashAccount">
+	insert into yfgp_account(user_id, total_cash, time_till, status) values (#{userId}, '0.00', now(), '0')
+	</insert>
+	
+	<select id="getUserMessageById" parameterType="Integer" resultType="User">
+		SELECT
+			u.user_id userId,
+			u.user_name userName,
+			u.`password`,
+			u.phone,
+			u.easemob_id easemobId,
+			u.easemob_password easemobPassword,
+			u.head_image headImage,
+			u.user_sex userSex,
+			u.user_level userLevel,
+		  u.user_status userStatus,
+			u.user_title userTitle,
+			u.user_brief userBrief,
+			u.tz_type tzType,
+			u.regist_time registTime,
+			u.stimes,
+			u.ltimes,
+			u.pathway
+		FROM
+			yfgp_user u,
+			yfgp_order o
+		WHERE
+			u.user_id = o.user_id
+		AND detail = #{detail}
+	</select>
+	
+</mapper>

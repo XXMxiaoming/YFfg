@@ -1,0 +1,7 @@
+package com.yfwl.yfgp.service;
+
+import com.yfwl.yfgp.model.FuturesTraderec;
+
+public interface FuturesTraderecService {
+	public Integer insertFuturesTraderec(FuturesTraderec futuresTraderec);
+}

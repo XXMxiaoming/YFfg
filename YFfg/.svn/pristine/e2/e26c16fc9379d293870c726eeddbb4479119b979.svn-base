@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+ 
+ <mapper namespace="com.yfwl.yfgp.dao1.FuturesTraderecMapper">
+
+	<resultMap  id="BaseResultMap" type="FuturesTraderec">
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="buysell" property="buysell" jdbcType="INTEGER" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="time" property="time" jdbcType="TIMESTAMP" />
+		<result column="number" property="number" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<insert id="insertFuturesTraderec" parameterType="FuturesTraderec">
+		insert into futures_traderec(name,buysell,price,status,time,number) values (#{name},#{buysell},#{price},#{status},SYSDATE(),#{number})
+	</insert>
+	
+	
+	<select id="getAllFutures" resultMap="BaseResultMap">
+		select * from futures_traderec where status='1' ORDER BY
+			time DESC
+	</select>
+	
+	
+	<select id="getAllShares" resultMap="BaseResultMap">
+		select * from futures_traderec where status='2' ORDER BY
+			time DESC
+	</select>
+	
+	<select id="getAllFutures2" resultMap="BaseResultMap">
+		select * from futures_traderec where status='1' ORDER BY
+			time DESC LIMIT #{pageCount},10;
+	</select>
+	
+	<select id="getAllFutures3" resultMap="BaseResultMap">
+		select * from futures_traderec where status='1'ORDER BY
+			time DESC LIMIT #{pageCount},#{count};
+	</select>
+	
+	<select id="getAllShares2" resultMap="BaseResultMap">
+		select * from futures_traderec where status='2' ORDER BY
+			time DESC LIMIT #{pageCount},10;
+	</select>
+	
+	<select id="getAllShares3" resultMap="BaseResultMap">
+		select * from futures_traderec where status='2' ORDER BY
+			time DESC LIMIT #{pageCount},#{count};
+	</select>
+	
+	</mapper>

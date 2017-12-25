@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.MemMapper">
+
+	<resultMap  id="BaseResultMap" type="Mem">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="consume_time" property="consumeTime" jdbcType="TIMESTAMP" />
+		<result column="expire_time" property="expireTime" jdbcType="TIMESTAMP" />
+		<result column="status" property="status" jdbcType="INTEGER" />		
+	</resultMap>
+	
+	<insert id="newMem" parameterType="Mem">
+	insert into yfgp_member (user_id, status) values (#{userId}, '0')
+	<selectKey resultType="Integer" keyProperty="id" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+	
+	
+	<select id="getMem" parameterType="Mem" resultMap="BaseResultMap">
+	select * from yfgp_member where user_id = #{userId} limit 1;
+	</select>
+	
+	<update id="updateMem" parameterType="Mem">
+	update yfgp_member set consume_time = #{consumeTime}, expire_time = #{expireTime} where user_id = #{userId}
+	</update>
+</mapper>

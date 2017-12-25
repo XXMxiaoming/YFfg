@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+ 
+ <mapper namespace="com.yfwl.yfgp.dao1.FuturesSharesMapper">
+
+	<resultMap  id="BaseResultMap" type="FuturesShares">
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="marketvalue" property="marketvalue" jdbcType="DECIMAL" />
+		<result column="posiscale" property="posiscale" jdbcType="DECIMAL" />
+		<result column="manyempty" property="manyempty" jdbcType="VARCHAR" />
+		<result column="deposit" property="deposit" jdbcType="DECIMAL" />
+		<result column="time" property="time" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<insert id="insertFuturesShares" parameterType="FuturesTraderec">
+		insert into futures_shares(name,marketvalue,posiscale,manyempty,deposit,time) 
+		values (#{name},#{marketvalue},#{posiscale},#{manyempty},#{deposit},SYSDATE())
+	</insert>
+	
+	<select id="getLastSameName" resultMap="BaseResultMap">
+	select * from futures_shares where time=(select max(time) from futures_shares where name='云南白药')
+	</select>
+	
+	<select id="getLastSameName2" resultMap="BaseResultMap">
+	select * from futures_shares where time=(select max(time) from futures_shares where name='国金证券')
+	</select>
+	</mapper>

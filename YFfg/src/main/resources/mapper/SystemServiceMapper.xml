@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.SystemServiceMapper">
+	
+	<resultMap id="BaseResultMap" type="SystemService">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="contentid" property="contentid" jdbcType="INTEGER"/>
+		<result column="name" property="name" jdbcType="VARCHAR"/>
+		<result column="addtime" property="addtime" jdbcType="TIMESTAMP"/>
+		<result column="status" property="status" jdbcType="VARCHAR"/>
+		
+		<result column="price" property="price" jdbcType="DECIMAL"/>
+		<result column="coupon" property="coupon" jdbcType="INTEGER"/>
+		<result column="unit" property="unit" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<select id="getServicePriceByContentId" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT
+			S.*,
+		(SELECT price FROM yfgp_service_price P WHERE P.code = S.code) AS price,
+		(SELECT coupon FROM yfgp_service_price P WHERE P.code = S.code) AS coupon,
+		(SELECT unit FROM yfgp_service_price P WHERE P.code = S.code) AS unit
+		FROM
+			yfgp_service S
+		WHERE
+			contentid = #{contentid}		
+	</select>
+	
+</mapper>

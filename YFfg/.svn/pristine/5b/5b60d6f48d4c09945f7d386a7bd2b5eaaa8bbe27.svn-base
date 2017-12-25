@@ -1,0 +1,107 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class UserControllerTest extends ControllerTest{
+		
+	@Test
+	public void test1(){
+		String url = host+"user/checkoutRegisterPhone.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("phone", "18129948342");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test2(){
+		String url = host+"user/sendSmsUpdatePassword.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("phone", "18129948342");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test3(){
+		String url = host+"user/selectUserById.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userIdStr", "10025,10026,10027");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test4(){
+		String url = host+"user/selectFriendList.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("loginName", "Mr.Lu");
+		map.put("token", "F27D00FE508047CCA81B5CB3B088D3262016042817305970477557");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test5(){
+		String url = host+"user/insertUser.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userName", "三级片你好啊");
+		map.put("phone", "123456");
+		map.put("password", "123456");
+		System.out.println(doPost(url, map));
+	}
+	
+	
+	@Test
+	public void test6(){
+		String url = host+"user/updateUserInfo.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userName", "三级片习近平你们操你妈的");
+		map.put("userId", "85");
+		map.put("token", "EACECE3C86BC40788B2FFAE0AB70D9B12015101917410559106392");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test7(){
+		String url = host+"user/updateUserSexInfo.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userSex", "0");
+		map.put("userId", "10024");
+		map.put("token", "F3B25044968F497FB276D4E82BE2EC172015122210485931123660");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test8(){
+		String url = host+"user/selectUsernameByeasemobIdList.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("easemobIdStr", "68yqvdx,kyme70a,fuu66yx,l9gxzfj,3bx4fzxt,3z123i9,59gep8c,fekc7a1,b78zf8ec,qpf026u,lhiy4zv,3jrjpm6,d65fmq5,4mod0dn,slpt2r1,e21cyfy,9qi0ov6,1e7aswy,s0owivs,6t37yg5,v2phdvf,mxi0jmz,w4rixkvy,ae7reu5,pvipb1b,ipvnp5j");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test9(){
+		String url = host+"user/selectUserSuper.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "85");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test10(){
+		String url = host+"user/selectUsernameByeasemobId.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("easemobId", "n5i3blm");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test11(){
+		String url = host+"user/getvuserlist.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "100002");
+		map.put("limit", "4");
+		System.out.println(doPost(url, map));
+	}
+}

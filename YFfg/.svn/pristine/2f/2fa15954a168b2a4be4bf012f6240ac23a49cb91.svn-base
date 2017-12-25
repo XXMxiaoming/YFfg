@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.RelationMapper">
+
+	<resultMap  id="BaseResultMap" type="Relation">
+		<id column="rid" property="rid" jdbcType="INTEGER" />
+		<result column="gid" property="gid" jdbcType="INTEGER" />
+		<result column="subgid" property="subgid" jdbcType="INTEGER" />
+		<result column="uid" property="uid" jdbcType="INTEGER" />
+		<result column="attr" property="attr" jdbcType="INTEGER" />
+		<result column="amount" property="amount" jdbcType="DECIMAL" />
+		<result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+		<result column="del" property="del" jdbcType="INTEGER" />
+		
+		<association property="accounts" javaType="Accounts">
+			<id column="gid" property="gid" jdbcType="INTEGER" />
+			<result column="userid" property="userid" jdbcType="INTEGER" />
+			<result column="gname" property="gname" jdbcType="VARCHAR" />
+			<result column="total" property="total" jdbcType="DECIMAL" />
+			<result column="stock" property="stock" jdbcType="DECIMAL" />
+			<result column="available" property="available" jdbcType="DECIMAL" />
+			<result column="frozen" property="frozen" jdbcType="DECIMAL" />
+			<result column="gznum" property="gznum" jdbcType="INTEGER" />
+			<result column="gtnum" property="gtnum" jdbcType="INTEGER" />
+			<result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+			<result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+			<result column="raisetime" property="raisetime" jdbcType="TIMESTAMP" />
+			<result column="endtime" property="endtime" jdbcType="TIMESTAMP" />
+			<result column="a_del" property="del" jdbcType="INTEGER" />
+			<result column="deltime" property="deltime" jdbcType="TIMESTAMP" />
+			<result column="info" property="info" jdbcType="VARCHAR" />
+			<result column="a_attr" property="attr" jdbcType="INTEGER" />
+			<result column="optigid" property="optigid" jdbcType="INTEGER" />
+			<result column="init" property="init" jdbcType="DECIMAL" />
+		</association>
+	</resultMap>
+	
+	<select id="getRelation" parameterType="Relation" resultMap="BaseResultMap">
+	select * from relation where gid=#{gid} and subgid=#{subgid} and uid=#{uid} and attr=#{attr} and del=#{del} limit 1;
+	</select>
+	
+	<update id="updateRelation" parameterType="Relation">
+	update relation set amount=#{amount},createtime=#{createtime},del=#{del} where rid = #{rid}
+	</update>
+	
+	<insert id="initRelation" parameterType="Relation">
+	insert into relation (gid, subgid, uid, attr, amount, createtime) values(#{gid},#{subgid},#{uid},#{attr},#{amount},#{createtime})
+	<selectKey resultType="Integer" keyProperty="rid" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+	
+	<update id="deleteRelation" parameterType="Relation">
+	update relation set del='1' where gid=#{gid} or subgid = #{gid}
+	</update>
+	
+	<delete id="deleteFollowRelation" parameterType="Relation">
+	delete from relation where gid=#{gid} and subgid=#{subgid} and uid=#{uid} and attr=#{attr} and del=#{del}; 
+	</delete>
+	
+	<select id="selectFollowRelation" parameterType="Relation" resultMap="BaseResultMap">
+	select *,accounts.attr a_attr, accounts.del a_del from relation,accounts where relation.gid = accounts.gid and relation.subgid=#{gid} and relation.attr=#{attr} and relation.del=#{del}
+	</select>
+	
+	<select id="selectFollowedRelation" parameterType="Relation" resultMap="BaseResultMap">
+	select *,accounts.attr a_attr, accounts.del a_del from relation,accounts where relation.subgid = accounts.gid and relation.gid=#{gid} and relation.attr=#{attr} and relation.del=#{del}
+	</select>
+	
+	<select id="selectInterestedRelation" parameterType="Relation" resultType="Integer">
+	select uid from relation where gid=#{gid} and relation.attr=#{attr} and relation.del=#{del}
+	</select>
+	
+	<select id="selectInterestRelation" parameterType="Relation" resultMap="BaseResultMap">
+	select *,accounts.attr a_attr, accounts.del a_del from relation,accounts where relation.gid = accounts.gid and relation.uid=#{uid} and relation.attr=#{attr} and relation.del=#{del}
+	</select>
+	
+	<select id="getAllRelation" parameterType="Relation" resultMap="BaseResultMap">
+	select * from relation where gid=#{gid} and del='0';
+	</select>
+	
+	
+	<insert id="insertBatchRelation" parameterType="java.util.List">
+		INSERT INTO relation (
+			gid,
+			subgid,
+			uid,
+			attr,
+			amount,
+			createtime
+		)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+			(
+				#{item.gid},
+				#{item.subgid},
+				#{item.uid},
+				#{item.attr},
+				#{item.amount},
+				SYSDATE()
+			)
+		</foreach>	
+	</insert>
+	
+	
+	
+</mapper>

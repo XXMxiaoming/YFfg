@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.ContestMapper">
+	<resultMap  id="BaseResultMap" type="Contest">
+		<id column="cid" property="cid" jdbcType="INTEGER" />
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="user_id" property="user_id" jdbcType="INTEGER" />
+		<result column="cname" property="cname" jdbcType="VARCHAR" />
+		<result column="info" property="info" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="created_time" property="created_time" jdbcType="TIMESTAMP" />
+		<result column="updated_time" property="updated_time" jdbcType="TIMESTAMP" />
+		<result column="deadline" property="deadline" jdbcType="TIMESTAMP" />
+		<result column="join_num" property="join_num" jdbcType="INTEGER" />	
+		<result column="join_fee" property="join_fee" jdbcType="INTEGER" />	
+		<result column="pool" property="pool" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />		
+	</resultMap>
+
+	<insert id="createContest" parameterType="Contest">
+	insert into yfgp_contest (id,user_id,cname,info,type,created_time,deadline,join_num,join_fee,status)
+	values (#{id}, #{user_id},#{cname},#{info},#{type},#{created_time},#{deadline},#{join_num},#{join_fee},#{status})
+	<selectKey resultType="Integer" keyProperty="cid" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+	
+	<select id="cnameUseCount" parameterType="String" resultType="Integer">
+	select count(*) from yfgp_contest where cname=#{cname}
+	</select>
+	
+	<select id="getContestById" parameterType="String" resultMap="BaseResultMap">
+	select * from yfgp_contest where id=#{id}
+	</select>
+	
+	<select id="getContestByCid" parameterType="Integer" resultMap="BaseResultMap">
+	select * from yfgp_contest where cid=#{cid}
+	</select>
+	
+	<update id="updateContest" parameterType="Contest">
+	update yfgp_contest set updated_time = #{updated_time} ,info=#{info}, join_num = #{join_num}, pool=#{pool} where id = #{id}
+	</update>
+	
+	<select id="getUserContest" parameterType="Integer" resultMap="BaseResultMap">
+	select * from yfgp_contest where user_id = #{user_id}
+	</select>
+	
+	<select id="allContest" parameterType="Integer" resultMap="BaseResultMap">
+	select * from yfgp_contest where deadline > now()
+	</select>
+	
+	<select id="searchContest" parameterType="String" resultMap="BaseResultMap">
+	select * from yfgp_contest where cname like '%#{cname}%'
+	</select>
+	
+	<delete id="deleteContest" parameterType="Contest">
+	delete from yfgp_contest where id=#{id}
+	</delete>
+	
+	
+	
+</mapper>

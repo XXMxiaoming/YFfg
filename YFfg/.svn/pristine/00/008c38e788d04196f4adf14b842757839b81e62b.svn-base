@@ -1,0 +1,37 @@
+
+#mairu
+orderBook1 = {"gid":"7479","stock":"000001","price":"13.00","vol":"100","act":"1"}
+orderBook2 = {"gid":"7479","stock":"000002","price":"13.00","vol":"100","act":"1"}
+orderBook3 = {"gid":"7479","stock":"000003","price":"13.00","vol":"100","act":"1"}
+orderBook4 = {"gid":"7479","stock":"000004","price":"13.00","vol":"100","act":"1"}
+orderBook5= {"gid":"7479","stock":"000005","price":"13.00","vol":"100","act":"1"}
+orderBook6 = {"gid":"7479","stock":"000006","price":"13.00","vol":"100","act":"1"}
+orderBook7 = {"gid":"7479","stock":"000007","price":"13.00","vol":"100","act":"1"}
+orderBook8 = {"gid":"7479","stock":"000008","price":"13.00","vol":"100","act":"1"}
+orderBook9 = {"gid":"7479","stock":"000009","price":"13.00","vol":"100","act":"1"}
+orderBook10 = {"gid":"7479","stock":"000010","price":"13.00","vol":"100","act":"1"}
+
+
+#maichu
+#orderBook1 = {"gid":"7479","stock":"000001","price":"13.00","vol":"100","act":"3"}
+#orderBook2 = {"gid":"7479","stock":"000002","price":"13.00","vol":"100","act":"3"}
+#orderBook3 = {"gid":"7479","stock":"000003","price":"13.00","vol":"100","act":"3"}
+#orderBook4 = {"gid":"7479","stock":"000004","price":"13.00","vol":"100","act":"3"}
+#orderBook5= {"gid":"7479","stock":"000005","price":"13.00","vol":"100","act":"3"}
+#orderBook6 = {"gid":"7479","stock":"000006","price":"13.00","vol":"100","act":"3"}
+#orderBook7 = {"gid":"7479","stock":"000007","price":"13.00","vol":"100","act":"3"}
+#orderBook8 = {"gid":"7479","stock":"000008","price":"13.00","vol":"100","act":"3"}
+#orderBook9 = {"gid":"7479","stock":"000009","price":"13.00","vol":"100","act":"3"}
+#orderBook10 = {"gid":"7479","stock":"000010","price":"13.00","vol":"100","act":"3"}
+
+#bianmaibianmai
+#orderBook1 = {"gid":"7479","stock":"000001","price":"13.00","vol":"100","act":"1"}
+#orderBook2 = {"gid":"7479","stock":"000002","price":"13.00","vol":"100","act":"3"}
+#orderBook3 = {"gid":"7479","stock":"000003","price":"13.00","vol":"100","act":"1"}
+#orderBook4 = {"gid":"7479","stock":"000004","price":"13.00","vol":"100","act":"3"}
+#orderBook5= {"gid":"7479","stock":"000005","price":"13.00","vol":"100","act":"3"}
+#orderBook6 = {"gid":"7479","stock":"000006","price":"13.00","vol":"100","act":"3"}
+#orderBook7 = {"gid":"7479","stock":"000007","price":"13.00","vol":"100","act":"1"}
+#orderBook8 = {"gid":"7479","stock":"000008","price":"13.00","vol":"100","act":"3"}
+#orderBook9 = {"gid":"7479","stock":"000009","price":"13.00","vol":"100","act":"1"}
+#orderBook10 = {"gid":"7479","stock":"000010","price":"13.00","vol":"100","act":"3"}

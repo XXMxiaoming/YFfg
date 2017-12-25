@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.OrderMapper">
+
+	<resultMap  id="BaseResultMap" type="Order">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="transaction_id" property="transactionId" jdbcType="VARCHAR" />
+		<result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="order_id" property="orderId" jdbcType="INTEGER" />
+		<result column="time_start" property="timeStart" jdbcType="TIMESTAMP" />
+		<result column="time_expire" property="timeExpire" jdbcType="TIMESTAMP" />
+		<result column="trade_type" property="tradeType" jdbcType="INTEGER" />
+		<result column="fee_total" property="feeTotal" jdbcType="DECIMAL" />
+		<result column="fee_origin" property="feeOrigin" jdbcType="DECIMAL" />
+		<result column="fee_left" property="feeLeft" jdbcType="DECIMAL" />
+		<result column="body" property="body" jdbcType="VARCHAR" />
+		<result column="detail" property="detail" jdbcType="VARCHAR" />
+		<result column="expand" property="expand" jdbcType="VARCHAR" />
+		<result column="expand_detail" property="expand_detail" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		
+		 <association property="user" javaType="User">
+	    	<id column="user_id" property="userId" jdbcType="INTEGER" />
+    		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+    		<result column="phone" property="phone" jdbcType="VARCHAR" />
+    		<result column="easemob_id" property="easemobId" jdbcType="VARCHAR" />
+    		<result column="easemob_password" property="easemobPassword" jdbcType="VARCHAR"/>
+    		<result column="head_image" property="headImage" jdbcType="VARCHAR"/>
+    		<result column="user_title" property="userTitle" jdbcType="VARCHAR"/>
+    		<result column="user_brief" property="userBrief" jdbcType="VARCHAR"/>
+	    </association>	
+	</resultMap>
+	
+	<insert id="initOrder" parameterType="Order">
+	insert into yfgp_order(transaction_id, out_trade_no, user_id, order_id, time_start, time_expire, trade_type, fee_total, fee_origin,fee_left, body, detail, expand,expand_detail, status)
+	values(#{transactionId},#{outTradeNo}, #{userId},#{orderId},#{timeStart},#{timeExpire},#{tradeType},#{feeTotal},#{feeOrigin},#{feeLeft},#{body},#{detail},#{expand},#{expand_detail}, #{status})
+	<selectKey resultType="Integer" keyProperty="id" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+	
+	<update id="updateOrder" parameterType="Order">
+	update yfgp_order set time_expire=#{timeExpire}, fee_left=#{feeLeft}, detail=#{detail},expand=#{expand},expand_detail=#{expand_detail}, status=#{status}
+	where id=#{id}
+	</update>
+	<update id="updateOrder2" parameterType="Order">
+	update yfgp_order set body=#{body},time_expire=#{timeExpire}, fee_total=#{feeTotal}, time_start=#{timeStart},expand=#{expand},expand_detail=#{expand_detail}
+	where id=#{id}
+	</update>
+	
+	<update id="updateOrderId" parameterType="Order">
+	update yfgp_order set order_id=#{orderId} where id=#{id}
+	</update>
+	
+	<select id="getOrder" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order, yfgp_user where yfgp_order.id=#{id} and yfgp_order.user_id = yfgp_user.user_id
+	</select>
+	
+	<select id="getOrderById" parameterType="Integer" resultMap="BaseResultMap">
+	select * from yfgp_order where id=#{id}
+	</select>
+	
+	<select id="hasGetOrder" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order, yfgp_user where yfgp_order.order_id=#{orderId} and yfgp_order.user_id=#{userId} and yfgp_order.user_id = yfgp_user.user_id limit 1;
+	</select>
+	
+	<select id="hasGetBonusOrder" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order, yfgp_user where yfgp_order.order_id=#{orderId} and yfgp_order.user_id=#{userId} and yfgp_order.user_id = yfgp_user.user_id and yfgp_order.trade_type='6' limit 1;
+	</select>
+	
+	<select id="getListOrder" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order, yfgp_user where yfgp_order.order_id=#{orderId} and yfgp_order.user_id = yfgp_user.user_id
+	ORDER BY yfgp_order.id DESC
+	</select>
+	
+	<select id="getListOrderLimit" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order, yfgp_user where yfgp_order.order_id=#{orderId} and yfgp_order.user_id = yfgp_user.user_id limit 0,100;
+	</select>
+	
+	<select id="getListBonusOrderLimit" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order, yfgp_user where yfgp_order.order_id=#{orderId} and yfgp_order.user_id = yfgp_user.user_id and yfgp_order.trade_type='6' limit 0,100;
+	</select>
+	
+	<select id="getFollowListOrder" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order, yfgp_user where yfgp_order.order_id=#{orderId} and yfgp_order.user_id = yfgp_user.user_id
+	and yfgp_order.trade_type='17'
+	</select>
+	
+	<select id="getFollowListOrderLimit" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order, yfgp_user where yfgp_order.order_id=#{orderId} and yfgp_order.user_id = yfgp_user.user_id
+	and yfgp_order.trade_type='17' limit #{start},#{limit};
+	</select>
+	
+	<select id="getFollowListOrderSize" parameterType="Order" resultType="Integer">
+	select count(*) from yfgp_order where yfgp_order.order_id=#{orderId} and yfgp_order.trade_type='17';
+	</select>
+	
+	<select id="getRealFollowListOrder" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order, yfgp_user where yfgp_order.order_id=#{orderId} and yfgp_order.user_id = yfgp_user.user_id
+	and yfgp_order.trade_type='17' and (yfgp_order.detail='' or yfgp_order.detail='0')
+	</select>
+	
+	<select id="getRealFollowListOrderSize" parameterType="Order" resultType="Integer">
+	select count(*) from yfgp_order where yfgp_order.order_id=#{orderId} and yfgp_order.trade_type='17' and (yfgp_order.detail='' or yfgp_order.detail='0');
+	</select>
+	
+	<select id="getSysFollowListOrder" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order, yfgp_user where yfgp_order.order_id=#{orderId} and yfgp_order.user_id = yfgp_user.user_id
+	and yfgp_order.trade_type='17' and yfgp_order.detail='1'
+	</select>
+	
+	<select id="getSysFollowListOrderSize" parameterType="Order" resultType="Integer">
+	select count(*) from yfgp_order where yfgp_order.order_id=#{orderId} and yfgp_order.trade_type='17' and yfgp_order.detail='1'
+	</select>
+	
+	<select id="getRandSysFollowListOrder" resultMap="BaseResultMap">
+	select * from yfgp_order, yfgp_user where yfgp_order.order_id=#{orderId} and yfgp_order.user_id = yfgp_user.user_id
+	and yfgp_order.trade_type='17' and yfgp_order.detail='1' ORDER BY yfgp_order.id limit #{start},#{limit};
+	</select>
+	
+	<select id="getBonusListOrder" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order, yfgp_user where yfgp_order.order_id=#{orderId} and yfgp_order.user_id = yfgp_user.user_id
+	and yfgp_order.trade_type='6' ORDER BY yfgp_order.id DESC
+	</select>
+	
+	<select id="getBonusOrder" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order, yfgp_user where yfgp_order.order_id=#{orderId} and yfgp_order.user_id = yfgp_user.user_id
+	and yfgp_order.trade_type='24' limit 1;
+	</select>
+	
+	<select id="getKeepOrderList" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order where status='5'
+	and trade_type='17';
+	</select>
+	
+	<select id="getOwnOrder" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order where user_id = #{userId}
+	ORDER BY id DESC
+	</select>
+	
+	<select id="getMaxOrder" parameterType="Integer" resultMap="BaseResultMap">
+	select * from yfgp_order where order_id=#{orderId} ORDER BY fee_total DESC limit 1;
+	</select>
+	
+	<select id="getOrderByOutTradeNo" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order where out_trade_no = #{outTradeNo}
+	</select>
+	
+	<select id="getExpireBonusOrder"  resultMap="BaseResultMap">
+	select * from yfgp_order where now() > time_expire and (trade_type='4'or trade_type='5' or trade_type='24') and fee_left > 0 and status ='1';
+	</select>
+	
+	<select id="getZuheOrder" resultMap="BaseResultMap">
+	select * from yfgp_order where trade_type='16' and status='5';
+	</select>
+	
+	<select id="getZuheOrderByDetail" parameterType="Order" resultMap="BaseResultMap">
+	select * from yfgp_order where trade_type='23' and detail=#{detail};
+	</select>
+	
+	<select id="getAllPublishBonusOrder" resultMap="BaseResultMap">
+	SELECT * FROM yfgp_order where trade_type='24' and status='1' and expand!='';
+	</select>
+	
+	<select id="getRankZuheOrder" resultMap="BaseResultMap">
+	select * from yfgp_order where trade_type='16' and status='5' order by time_start ${sort} limit #{start},#{limit};
+	</select>
+	
+	
+	<select id="hasPayContentOrder" resultMap="BaseResultMap">
+	select * from yfgp_order where trade_type=#{tradeType} and user_id=#{userId} and detail=#{detail} order by id desc limit 1;
+	</select>
+	
+	<select id="getZJHBorder" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT
+			fee_total,
+			fee_left,
+			body,
+			detail
+		FROM
+			yfgp_order
+		WHERE
+			out_trade_no = #{gid}
+		AND trade_type = 16	
+	</select>
+	
+	<select id="hasStrategyOrder" resultMap="BaseResultMap">
+	select * from yfgp_order where trade_type=#{tradeType} and user_id=#{userId} order by id desc limit 1;
+	</select>
+	
+	
+	<!-- 谁订阅了我 -->
+	<select id="getMyVIPNnm" parameterType="Integer" resultType="Integer">
+		SELECT
+			COUNT(DISTINCT(user_id)) AS myVIPNnm
+		FROM
+			yfgp_order
+		WHERE
+			trade_type = 25
+		AND STATUS = 0
+		AND detail = #{userId}
+	</select>
+	<select id="getMyVIPOrder" resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+			yfgp_order
+		WHERE
+			 trade_type = 25
+		AND STATUS = 0
+		AND detail = #{userId}
+		GROUP BY user_id
+		ORDER BY time_start DESC
+		LIMIT #{pageCount},20		
+	</select>
+	
+	<!-- 我订阅了谁 -->
+	<select id="getMySubscribeVIPNum" parameterType="Integer" resultType="Integer">
+		SELECT
+			COUNT(DISTINCT(user_id)) AS mySubNnm
+		FROM
+			yfgp_order
+		WHERE
+			trade_type = 26
+		AND STATUS = 0
+		AND detail = #{userId}
+	</select>
+	<select id="getMySubscribeVIPOrder" resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+			yfgp_order
+		WHERE
+			 trade_type = 26
+		AND STATUS = 0
+		AND detail = #{userId}
+		GROUP BY user_id
+		ORDER BY time_start DESC
+		LIMIT #{pageCount},20	
+	</select>
+	
+	<select id="getTimeStart" resultType="String">
+		SELECT
+			time_start
+		FROM
+			yfgp_order
+		WHERE
+			user_id = #{userId}
+		AND detail = #{detail}
+		AND trade_type = 25
+		AND `status` = 0
+		ORDER BY time_start ASC 
+		LIMIT 1	
+	</select>
+	<select id="getTimeExpire" resultType="String">
+		SELECT
+			time_expire
+		FROM
+			yfgp_order
+		WHERE
+			user_id = #{userId}
+		AND detail = #{detail}
+		AND trade_type = 25
+		AND `status` = 0
+		ORDER BY time_expire DESC
+		LIMIT 1	
+	</select>
+	
+	<select id="getFollowFromOrderMapper" parameterType="Order" resultType="String">
+	SELECT
+	DISTINCT user_id
+FROM
+	yfgp_order
+WHERE
+	detail = #{detail}
+AND (
+	trade_type = 47
+	OR trade_type = 48
+) AND time_expire >= now() 
+
+	</select>
+
+	<select id="hasBuyHomeAccounts" parameterType="Order" resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+			yfgp_order
+		WHERE
+			user_id = #{userId}
+		AND detail = #{detail}
+		AND trade_type = 47
+		AND `status` = 0	
+	</select>
+
+	
+	
+</mapper>

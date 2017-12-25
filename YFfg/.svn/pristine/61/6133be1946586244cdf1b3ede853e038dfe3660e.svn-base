@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yfwl.yfgp.dao.LoginByThirdAppAccountMapper">
+	
+	<resultMap type="ThirdAppAccount" id="BaseResultMap">
+		<id column="connect_id" property="connectId" jdbcType="INTEGER" />
+		<result column="thirdaccount_id" property="thirdAccountId" jdbcType="VARCHAR" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="thirdaccount_name" property="thirdAccountName" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 查询第三方ID是否存在关联表中 -->
+	<select id="thirdAccountIdIsHaven" parameterType="String" resultType="Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			yfgp_thirdaccount_connect
+		WHERE
+			thirdaccount_id = #{thirdAccountId}	
+	</select>
+	
+	<!-- 插入一条关联记录 -->
+	<insert id="insertConnectRecord" parameterType="ThirdAppAccount" >
+		INSERT INTO yfgp_thirdaccount_connect (thirdaccount_id, user_id,type,thirdaccount_name,time)
+		VALUES
+			(#{thirdAccountId}, #{userId},#{type},#{thirdAccountName},SYSDATE())	
+	</insert>
+	
+	<!-- 查询用户绑定了哪些第三方账号 -->
+	<select id="selectThirdAccount" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+			yfgp_thirdaccount_connect
+		WHERE
+			user_id = #{user_id}	
+	</select>
+	
+	
+	<select id="getThirdAccount" parameterType="String" resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+			yfgp_thirdaccount_connect
+		WHERE
+			thirdaccount_id = #{thirdAccountId}	
+	</select>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.IntegralTradeMapper">
+
+	<resultMap  id="BaseResultMap" type="IntegralTrade">
+		<id column="trade_id" property="tradeId" jdbcType="INTEGER" />
+		<result column="integral_id" property="integralId" jdbcType="INTEGER" />
+		<result column="trade_info" property="tradeInfo" jdbcType="VARCHAR" />
+		<result column="trade_type" property="tradeType" jdbcType="INTEGER" />
+		<result column="integral_change" property="integralChange" jdbcType="INTEGER" />
+		<result column="trade_time" property="tradeTime" jdbcType="TIMESTAMP" />
+		<result column="trade_state" property="tradeState" jdbcType="INTEGER" />		
+	</resultMap>
+
+	<insert id="insertIntegralTrade" parameterType="IntegralTrade">
+	insert into yfgp_integral_log (integral_id, trade_info, trade_type, integral_change, trade_time, trade_state)
+	values (#{integralId}, #{tradeInfo}, #{tradeType}, #{integralChange}, #{tradeTime}, #{tradeState})
+	</insert>
+	
+	<select id="getListIntegralTrade" parameterType="Integer" resultMap="BaseResultMap">
+	select * from yfgp_integral_log where integral_id = #{integralId}
+	</select>
+	
+	<select id="getTradeCount" parameterType="IntegralTrade" resultType="Integer">
+	select COUNT(*) from yfgp_integral_log where date(trade_time) = curdate() and trade_type = #{tradeType} and integral_id = #{integralId}
+	</select>
+	
+	<select id="getAllTradeCount" parameterType="IntegralTrade" resultType="Integer">
+	select COUNT(*) from yfgp_integral_log where trade_type = #{tradeType} and integral_id = #{integralId}
+	</select>
+	
+	<select id="getTodayListIntegralTrade" parameterType="Integer" resultMap="BaseResultMap">
+	select * from yfgp_integral_log where date(trade_time) = curdate() and integral_id = #{integralId}
+	</select>
+	
+	<select id="getTodayListCountIntegralTrade" parameterType="Integer" resultType="com.yfwl.yfgp.model.IntegralTradeCount">
+	select count(*) as count, sum(integral_change) as countTrade, trade_type as countType from yfgp_integral_log where date(trade_time) = curdate() and integral_id = #{integralId} group by trade_type
+	</select>
+	
+	
+</mapper>

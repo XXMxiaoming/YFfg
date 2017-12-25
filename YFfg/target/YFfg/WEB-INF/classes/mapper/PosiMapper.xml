@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.PosiMapper">
+
+	<resultMap  id="BaseResultMap" type="Posi">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="gid" property="gid" jdbcType="INTEGER" />
+		<result column="stockid" property="stockid" jdbcType="VARCHAR" />
+		<result column="vol" property="vol" jdbcType="INTEGER" />
+		<result column="available" property="available" jdbcType="INTEGER" />
+		<result column="frozen" property="frozen" jdbcType="INTEGER" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="onway" property="onway" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />		
+	</resultMap>
+	
+	<select id="getPosi" parameterType="Posi" resultMap="BaseResultMap">
+	select posi.*,stockinfo.name from posi join stockinfo on posi.stockid = stockinfo.stockid where gid=#{gid};
+	</select>
+	
+	<select id="getStockPosi"  parameterType="Posi" resultMap="BaseResultMap">
+	select * from posi where gid=#{gid} and stockid = #{stockid} limit 1;
+	</select>
+	
+	<insert id="initPosi" parameterType="Posi">
+	insert into posi (gid,stockid,vol,available,frozen,price,onway) values(#{gid}, #{stockid}, #{vol}, #{available}, #{frozen}, #{price}, #{onway})
+	</insert>
+	
+	<delete id="deletePosi" parameterType="Posi">
+	delete from Posi where gid=#{gid}
+	</delete>
+	
+	<delete id="deleteStockPosi" parameterType="Posi">
+	delete from Posi where gid=#{gid} and stockid=#{stockid}
+	</delete>
+	
+	<update id="updatePosi" parameterType="Posi">
+	update posi set vol=#{vol}, available=#{available}, frozen=#{frozen}, price=#{price},onway=#{onway} where gid = #{gid} and stockid = #{stockid}
+	</update>
+	
+	<update id="clearPosi">
+	update posi set available = available + onway, onway='0';
+	</update>
+	
+	<select id="getAllStockidPosi"  parameterType="Posi" resultMap="BaseResultMap">
+	select * from posi where stockid = #{stockid};
+	</select>
+</mapper>

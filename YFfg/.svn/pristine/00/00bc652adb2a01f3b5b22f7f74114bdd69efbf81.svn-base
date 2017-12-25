@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.yfwl.yfgp.dao.PictureMapper" >
+
+  <resultMap type="Picture" id="BaseResultMap"  > 
+    <id column="pic_id" property="picId" jdbcType="INTEGER" />
+    <result column="attach_id" property="attachId" jdbcType="VARCHAR" />
+    <result column="picture_type" property="pictureType" jdbcType="INTEGER" />
+    <result column="origin_pic" property="originPic" jdbcType="VARCHAR" />
+    <result column="compress_pic" property="compressPic" jdbcType="VARCHAR" />
+    <result column="pic_state" property="picState" jdbcType="INTEGER"/>
+  </resultMap>
+  
+  <update id="updateaImage" parameterType="Picture">
+  UPDATE yfgp_picture SET 
+	 	pic_state = '0'
+	WHERE
+		attach_id = #{attachId} AND picture_type = #{pictureType}
+  </update>
+  
+  
+  <!--  -->
+  <insert id="insertImage" parameterType="Picture">
+	INSERT INTO yfgp_picture (
+		attach_id,
+		picture_type,
+		origin_pic,
+		compress_pic,
+		pic_state
+	)
+	VALUES
+		(
+			#{attachId},
+			#{pictureType},
+			#{originPic},
+			#{compressPic},
+			'1'
+		)  	
+  </insert>
+  
+  <select id="selectImage" parameterType="Picture" resultMap="BaseResultMap">
+  	SELECT * FROM yfgp_picture
+  	 where pic_id=(
+  	 select max(pic_id) FROM yfgp_picture
+  	 WHERE attach_id = #{attachId} AND picture_type = #{pictureType} AND pic_state='1'
+  	 )
+  </select>
+  
+ 
+</mapper>

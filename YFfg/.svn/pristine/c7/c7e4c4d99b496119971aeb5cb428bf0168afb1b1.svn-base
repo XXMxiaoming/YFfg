@@ -1,0 +1,50 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class LoginByThirdAppAccountController2Test extends ControllerTest{
+	
+	@Test
+	public void test1() {
+		String url = host+"DSFlogin/DSFaccIsHaven.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("thirdAccountId", "768315CD15BFE4ADA26542039E29");		
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test2() {
+		String url = host+"DSFlogin/insertUserDSFDL.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userName", "A");
+		map.put("thirdAccountId", "256");	
+		map.put("headImage", "22");	
+		map.put("type", "QQ");	
+		map.put("thirdAccountName", "测试");	
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test3() {
+		String url = host+"DSFlogin/login.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("thirdAccountId", "1232345789");	
+		map.put("headImage", "11");	
+		map.put("type", "QQ");	
+		map.put("thirdAccountName", "TTTTT");	
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test4() {
+		String url = host+"DSFlogin/setname.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "32650");	
+		map.put("userName", "dwsqa");	
+		System.out.println(doPost(url, map));
+	}
+}

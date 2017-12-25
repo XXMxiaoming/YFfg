@@ -1,0 +1,19 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class LoginControllerTest extends ControllerTest{
+	
+	@Test
+	public void test1() {
+		String url = host+"login/login.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("phone", "13366669999");
+		map.put("password", "111111");
+		System.out.println(doPost(url, map));
+	}
+}

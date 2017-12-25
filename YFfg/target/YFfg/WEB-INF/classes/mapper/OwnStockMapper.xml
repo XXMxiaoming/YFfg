@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.OwnStockMapper">
+
+	<resultMap  id="BaseResultMap" type="OwnStock">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="stock_code" property="stockCode" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />		
+	</resultMap>
+	<insert id="insertOwnStock" parameterType="OwnStock">
+	insert into yfgp_own_stock (user_id, stock_code, status) values (#{userId}, #{stockCode}, #{status})
+	</insert>
+	
+	<delete id="deleteOwnStock" parameterType="OwnStock">
+	delete from yfgp_own_stock where user_id = #{userId} and stock_code = #{stockCode}
+	</delete>
+	
+	<select id="getOwnStock" parameterType="Integer" resultMap="BaseResultMap">
+	select * from yfgp_own_stock where user_id = #{userId}
+	</select>
+	
+	<select id="getOwnStockCount" parameterType="Integer" resultType="Integer">
+	select count(*) from yfgp_own_stock where user_id = #{userId}
+	</select>
+	
+	<delete id="deleteAllStock" parameterType="OwnStock">
+	delete from yfgp_own_stock where user_id = #{userId}
+	</delete>
+
+	<select id="getOwnStock2" parameterType="String" resultMap="BaseResultMap">
+	select * from yfgp_own_stock where stock_code like concat('%',#{stockCode},'%');
+	</select>
+</mapper>

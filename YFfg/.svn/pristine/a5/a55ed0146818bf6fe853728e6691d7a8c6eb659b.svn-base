@@ -1,0 +1,23 @@
+package com.yfwl.yfgp.controllertest;
+
+import static org.junit.Assert.*;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class GroupControllerTest extends ControllerTest {
+
+	@Test
+	public void test() {
+	String url=	"http://120.76.192.128:30555/YFfg/zuhe/create.do";
+	HashMap<String,String> map=new HashMap<String, String>();
+	map.put("userid", "123987");
+	map.put("gname", "测试组合");
+	map.put("token", "123");
+	System.out.println(doPost(url, map));
+	}
+
+}

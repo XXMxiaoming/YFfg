@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.ChatRoomMapper">
+
+	<resultMap  id="BaseResultMap" type="ChatRoom">
+		<id column="chatroom_id" property="chatRoomId" jdbcType="INTEGER" />
+		<result column="ease_cr_id" property="easeCrId" jdbcType="VARCHAR" />
+		<result column="cr_name" property="crName" jdbcType="VARCHAR" />
+		<result column="cr_desc" property="crDesc" jdbcType="VARCHAR" />
+		<result column="cr_owner" property="crOwner" jdbcType="VARCHAR" />
+		<result column="max_user" property="maxUser" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<insert id="insertChatRoom" parameterType="ChatRoom">
+		INSERT INTO yfgp_chatroom (
+			ease_cr_id,
+			cr_name,
+			cr_desc,
+			cr_owner,
+			max_user,
+			create_time
+		)
+		VALUES
+			(	
+				#{easeCrId},
+				#{crName},
+				#{crDesc},
+				#{crOwner},
+				#{maxUser},
+				SYSDATE()
+			)	
+	</insert>
+	
+	<delete id="deleteChatRoom" parameterType="String">
+		DELETE FROM yfgp_chatroom WHERE ease_cr_id = #{easeCrId}
+	</delete>
+	
+	<select id="getCRByEaseId" parameterType="String" resultMap="BaseResultMap">
+		SELECT * FROM yfgp_chatroom WHERE ease_cr_id = #{easeCrId}
+	</select>
+	
+	<update id="updateCR" parameterType="ChatRoom">
+		UPDATE yfgp_chatroom
+		SET cr_name = #{crName},
+		 cr_desc = #{crDesc},
+		 max_user = #{maxUser}
+		WHERE
+			ease_cr_id = #{easeCrId}	
+	</update>
+	
+	<select id="getCRPaging" parameterType="Integer" resultType="String">
+		SELECT
+			ease_cr_id AS roomId
+		FROM
+			yfgp_chatroom
+		LIMIT #{pageCount},15	
+	</select>
+	
+	<select id="getCRSimpleInfo" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT
+			C.ease_cr_id,
+			C.cr_name,
+			C.cr_desc,
+			C.max_user,
+			(SELECT U.user_name FROM yfgp_user U WHERE U.easemob_id = C.cr_owner) cr_owner,
+			C.create_time
+		FROM
+			yfgp_chatroom C
+		LIMIT #{pageCount},15	
+	</select>
+
+	<select id="getSYCR" parameterType="Integer" resultMap="BaseResultMap">
+		SELECT
+			*
+		FROM
+			yfgp_chatroom
+		WHERE
+			chatroom_id = (
+				SELECT
+					cr_id
+				FROM
+					yfgp_sy_chatroom
+				WHERE
+					sequence = #{sequence}
+				ORDER BY
+					add_time DESC
+				LIMIT 1
+			)	
+	</select>	
+	
+</mapper>	

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.StatMapper">
+
+	<resultMap  id="BaseResultMap" type="Stat">
+		<result column="gid" property="gid" jdbcType="INTEGER" />
+		<result column="rd" property="rd" jdbcType="DECIMAL" />
+		<result column="ra" property="ra" jdbcType="DECIMAL" />
+		<result column="r7" property="r7" jdbcType="DECIMAL" />
+		<result column="r30" property="r30" jdbcType="DECIMAL" />
+		<result column="r6m" property="r6m" jdbcType="DECIMAL" />
+		<result column="r1y" property="r1y" jdbcType="DECIMAL" />
+		<result column="maxProfit" property="maxProfit" jdbcType="DECIMAL" />
+		<result column="maxLoss" property="maxLost" jdbcType="DECIMAL" />
+		<result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+		<result column="del" property="del" jdbcType="INTEGER" />
+		<result column="sort" property="sort" jdbcType="VARCHAR" />
+		<result column="cite_id" property="cite_id" jdbcType="INTEGER" />
+		<association property="accounts" javaType="Accounts">
+			<id column="gid" property="gid" jdbcType="INTEGER" />
+			<result column="userid" property="userid" jdbcType="INTEGER" />
+			<result column="gname" property="gname" jdbcType="VARCHAR" />
+			<result column="total" property="total" jdbcType="DECIMAL" />
+			<result column="stock" property="stock" jdbcType="DECIMAL" />
+			<result column="available" property="available" jdbcType="DECIMAL" />
+			<result column="frozen" property="frozen" jdbcType="DECIMAL" />
+			<result column="gznum" property="gznum" jdbcType="INTEGER" />
+			<result column="gtnum" property="gtnum" jdbcType="INTEGER" />
+			<result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+			<result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+			<result column="del" property="del" jdbcType="INTEGER" />
+			<result column="deltime" property="deltime" jdbcType="TIMESTAMP" />
+			<result column="info" property="info" jdbcType="VARCHAR" />
+			<result column="attr" property="attr" jdbcType="INTEGER" />
+			<result column="optigid" property="optigid" jdbcType="INTEGER" />
+			<result column="init" property="init" jdbcType="DECIMAL" />
+			<result column="rank" property="rank" jdbcType="DECIMAL" />
+		</association>
+	</resultMap>
+	
+	<insert id="initStat" parameterType="Stat">
+	INSERT INTO stat (gid,r7,r30,r6m,r1y,cite_id) VALUES (#{gid}, #{r7}, #{r30}, #{r6m}, #{r1y}, #{cite_id})
+	</insert>
+	
+	<select id="getRankStatList" parameterType="Stat" resultMap="BaseResultMap">
+		select * from stat,accounts where stat.gid = accounts.gid and stat.del='0' and accounts.attr in ('1', '6','5') order by ${sort} desc limit #{del},20;
+	</select>
+	
+	<select id="getAllStatList" resultMap="BaseResultMap">
+		select * from stat,accounts where stat.gid = accounts.gid and stat.del='0' and accounts.attr in ('1', '5', '6');
+	</select>
+	
+	
+	<select id="getStat" parameterType="Stat" resultMap="BaseResultMap">
+	select * from stat,accounts where stat.gid = accounts.gid and stat.gid=#{gid} and stat.del='0' and accounts.attr!='7';
+	</select>
+	
+	<update id="deleteStat" parameterType="Stat">
+	update stat set del='1' where gid=#{gid}
+	</update>
+	
+	<update id="updateStat" parameterType="Stat">
+	update stat set rd=#{rd},ra=#{ra},r7=#{r7},r30=#{r30},r6m=#{r6m},r1y=#{r1y},maxProfit=#{maxProfit},maxLoss=#{maxLost},updatetime=#{updatetime},
+	del=#{del} where gid=#{gid}
+	</update>
+	
+	<select id="getContestRankStatList" resultMap="BaseResultMap">
+		select * from stat,accounts where stat.gid = accounts.gid and stat.cite_id=#{cite_id} and accounts.attr='8' and stat.del='0' order by ${sortby} desc,rd desc limit #{start},#{limit};
+	</select>
+	
+	<select id="getAllContestRankStatList" resultMap="BaseResultMap">
+		select * from stat,accounts where stat.gid = accounts.gid and stat.cite_id > 0 and accounts.attr='8' and stat.del='0' order by ${sortby} desc,rd desc limit #{start},#{limit};
+	</select>
+	
+</mapper>

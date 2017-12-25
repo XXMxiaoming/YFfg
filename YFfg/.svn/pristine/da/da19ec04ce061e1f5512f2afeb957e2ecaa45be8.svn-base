@@ -1,0 +1,65 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class LoginByThirdAppAccountControllerTest extends ControllerTest{
+	
+	@Test
+	public void test1() {
+		String url = host+"loginByThirdAppAccount/thirdAccountIdIsHaven.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("thirdAccountId", "747C768315CD15BFE4ADA26542039E29");		
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test2() {
+		String url = host+"loginByThirdAppAccount/sendBindValidateCode.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("phone", "18129948342");		
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test3() {
+		String url = host+"loginByThirdAppAccount/validateCodeWhenDSFDL.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("phone", "18129948342");
+		map.put("randomNum", "2583");		
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test4() {
+		String url = host+"loginByThirdAppAccount/validatePhoneWhenDSFDL.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("phone", "18129948342");
+		map.put("thirdAccountId", "11");		
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test5() {
+		String url = host+"loginByThirdAppAccount/updateUsernameWhenDSFDL.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("phone", "18129948342");
+		map.put("thirdAccountId", "11");
+		map.put("userName", "马云");	
+		map.put("headImage", "马云的头像");	
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test6() {
+		String url = host+"loginByThirdAppAccount/selectThirdAccount.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "100010");		
+		System.out.println(doPost(url, map));
+	}
+	
+	
+}

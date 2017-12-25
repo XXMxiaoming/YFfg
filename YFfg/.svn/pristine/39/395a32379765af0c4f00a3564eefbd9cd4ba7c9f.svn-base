@@ -1,0 +1,803 @@
+package com.yfwl.yfgp.controller;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+import com.yfwl.yfgp.annotation.SensitivewordInterceptorAnnotation;
+import com.yfwl.yfgp.model.AccessToken;
+import com.yfwl.yfgp.model.Accounts;
+import com.yfwl.yfgp.model.IncomeLoss;
+import com.yfwl.yfgp.model.Mem;
+import com.yfwl.yfgp.model.Token;
+import com.yfwl.yfgp.model.User;
+import com.yfwl.yfgp.model.ValidateCode;
+import com.yfwl.yfgp.service.AccountService;
+import com.yfwl.yfgp.service.AccountsService;
+import com.yfwl.yfgp.service.CashService;
+import com.yfwl.yfgp.service.FutureService;
+import com.yfwl.yfgp.service.IncomeLossService;
+import com.yfwl.yfgp.service.IntegralService;
+import com.yfwl.yfgp.service.LoginService;
+import com.yfwl.yfgp.service.SMSendValiCodeService;
+import com.yfwl.yfgp.service.TokenService;
+import com.yfwl.yfgp.service.UserAttentionService;
+import com.yfwl.yfgp.service.UserService;
+import com.yfwl.yfgp.service.ValidateCodeService;
+import com.yfwl.yfgp.utils.ControllerTest;
+import com.yfwl.yfgp.utils.GetHSTokenUtils;
+import com.yfwl.yfgp.utils.JacksonUtils;
+import com.yfwl.yfgp.utils.MD5Util;
+import com.yfwl.yfgp.utils.SortByMap;
+
+@Controller
+@RequestMapping("/user2")
+public class UserController2 extends BaseController {
+
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private TokenService tokenService;
+	@Autowired
+	private UserAttentionService userAttentionService;
+	@Autowired
+	private AccountService accountService;
+	@Autowired
+	private LoginService loginService;
+	@Autowired
+	private IntegralService integralService;
+	@Autowired
+	private FutureService futureService;
+	@Autowired
+	private ValidateCodeService validateCodeService;
+	@Autowired
+	private SMSendValiCodeService sMSandValiCodeService;
+	@Autowired
+	private CashService cashService;
+	@Autowired
+	private AccountsService accountsService;
+	@Autowired
+	private IncomeLossService incomeLossService;
+
+	// private static final Logger LOGGER =
+	// LoggerFactory.getLogger(EasemobIMUsers.class);
+
+	// 知道原密码，修改密码
+	@RequestMapping(value = "/checkOldPwd", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> checkOldPwd(HttpServletRequest request,
+			HttpServletResponse response) {
+
+		String id = request.getParameter("userId");
+		String oldPwd = request.getParameter("oldPwd");
+
+		try {
+			oldPwd = new String(new BASE64Decoder().decodeBuffer(oldPwd));// base64位解密
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (id != null && !id.isEmpty() && oldPwd != null && !oldPwd.isEmpty()) {
+			Integer userId = Integer.parseInt(id);
+			User user = new User();
+			user.setUserId(userId);
+			user.setPassword(oldPwd);
+
+			User user1 = userService.selectUserByIdPwd(user);
+			if (user1 != null) {
+				map = rspFormat("", SUCCESS);
+			} else {
+				map = rspFormat("", NO_USER);
+			}
+		} else {
+			map = rspFormat("", WRONG_PARAM);
+		}
+		return map;
+	}
+
+	@RequestMapping(value = "/changePwd", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> changePwd(HttpServletRequest request,
+			HttpServletResponse response) {
+		String id = request.getParameter("userId");
+		String password = request.getParameter("password");
+		String paramToken = request.getParameter("token");
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (id != null && !id.isEmpty() && password != null
+				&& !password.isEmpty() && paramToken != null
+				&& !paramToken.isEmpty()) {
+			Integer userId = Integer.parseInt(id);
+			String dbToken = tokenService.selectTokenByUserId2(userId);
+			if (dbToken != null && !dbToken.isEmpty()) {
+				if (dbToken.equals(paramToken)) {
+					try {
+						password = new String(
+								new BASE64Decoder().decodeBuffer(password));// base64位解密
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					boolean isUpdateOk = userService.updatePasswordGeneral(
+							password, userId);
+					if (isUpdateOk == true) {
+						map = rspFormat("", SUCCESS);
+					} else {
+						map = rspFormat("", FAIL);
+					}
+				} else {
+					map = rspFormat("", WRONG_TOKEN);
+				}
+			} else {
+				map = rspFormat("", FAIL);
+			}
+		} else {
+			map = rspFormat("", WRONG_PARAM);
+		}
+		return map;
+	}
+
+	@RequestMapping(value = "/updatePwd", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> updatePwd(HttpServletRequest request,
+			HttpServletResponse response) {
+
+		// String id = request.getParameter("userId");
+		// String oldPwd = request.getParameter("oldPwd");
+		// String password = request.getParameter("password");
+		// String paramToken = request.getParameter("token");
+		// Map<String, Object> map = new HashMap<String, Object>();
+		// if (id != null && !id.isEmpty() && password != null
+		// && !password.isEmpty() && paramToken != null
+		// && !paramToken.isEmpty() && oldPwd != null && !oldPwd.isEmpty()) {
+		//
+		// Integer userId = Integer.parseInt(id);
+		// String dbToken = tokenService.selectTokenByUserId2(userId);
+		// if (dbToken.equals(paramToken)) {
+		// try {
+		// oldPwd = new String(
+		// new BASE64Decoder().decodeBuffer(oldPwd));// base64位解密
+		// password = new String(
+		// new BASE64Decoder().decodeBuffer(password));// base64位解密
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+		// User user = new User();
+		// user.setUserId(userId);
+		// user.setPassword(oldPwd);
+		// User user1 = userService.selectUserByIdPwd(user);
+		// if (user1 != null) {
+		// boolean isUpdateOk = userService.updatePasswordGeneral(
+		// password, userId);
+		// if (isUpdateOk == true) {
+		// map = rspFormat("", SUCCESS);
+		// } else {
+		// map = rspFormat("", FAIL);
+		// }
+		// } else {
+		// map = rspFormat("", NAME_PWD_WRONG);
+		// }
+		// }
+		// } else {
+		// map = rspFormat("", WRONG_PARAM);
+		// }
+		// return map;
+
+		// 此处还没上线
+		String id = request.getParameter("userId");
+		String oldPwd = request.getParameter("oldPwd");
+		String password = request.getParameter("password");
+		String paramToken = request.getParameter("token");
+		Map<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, String> map2 = new HashMap<String, String>();
+		if (id != null && !id.isEmpty() && password != null
+				&& !password.isEmpty() && paramToken != null
+				&& !paramToken.isEmpty() && oldPwd != null && !oldPwd.isEmpty()) {
+			Integer userId = Integer.parseInt(id);
+			String dbToken = tokenService.selectTokenByUserId2(userId);
+			Object status = null;
+			if (dbToken.equals(paramToken)) {
+				try {
+					map2.put("ctl", "api");
+					map2.put("act", "change_login_password");
+					map2.put("fage_id ", id);
+					map2.put("old_password", oldPwd);
+					map2.put("user_pwd ", password);
+					String time = String.valueOf(new Date().getTime())
+							.substring(0, 10);
+					map2.put("time", time);
+					map2.put(
+							"signature",
+							MD5Util.string2MD5(SortByMap.sort(map2)
+									+ "Yx3V27g4SckNJ1Zk"));
+					String res = ControllerTest.sentPost(map2);
+					status = new JSONObject(res).get("status");
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+
+				if (("0").equals(status.toString())) {
+					try {
+						oldPwd = new String(
+								new BASE64Decoder().decodeBuffer(oldPwd));// base64位解密
+						password = new String(
+								new BASE64Decoder().decodeBuffer(password));// base64位解密
+
+						User user = new User();
+						user.setUserId(userId);
+						user.setPassword(oldPwd);
+						User user1 = userService.selectUserByIdPwd(user);
+						if (user1 != null) {
+							boolean isUpdateOk = userService
+									.updatePasswordGeneral(password, userId);
+							if (isUpdateOk == true) {
+								map = rspFormat("", SUCCESS);
+							} else {
+								map = rspFormat("", FAIL);
+							}
+						} else {
+							map = rspFormat("", NAME_PWD_WRONG);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else {
+					map = rspFormat("", WRONG_PARAM);
+				}
+			} else {
+				map = rspFormat("", WRONG_TOKEN);
+			}
+
+		} else {
+			map = rspFormat("", WRONG_PARAM);
+		}
+
+		return map;
+	}
+
+	// 注册
+	@SuppressWarnings("restriction")
+	@RequestMapping(value = "/insertUser2", method = { RequestMethod.POST })
+	@ResponseBody
+	@SensitivewordInterceptorAnnotation
+	@Transactional(rollbackFor = { Exception.class, RuntimeException.class })
+	public Map<String, Object> insertUser2(HttpServletRequest request,
+			HttpServletResponse response) throws UnsupportedEncodingException {
+		String userName = URLDecoder.decode(
+				(String) request.getAttribute("userName"), "utf-8");
+		String user_pwd = request.getParameter("user_pwd");
+		try {
+			user_pwd = new String(new BASE64Decoder().decodeBuffer(user_pwd));// base64位解密
+			//System.out.println(user_pwd+"fjdskfjls");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String verify = request.getParameter("verify"); // 验证码
+		String mobile = request.getParameter("mobile");
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		HashMap<String, String> map2 = new HashMap<String, String>();
+		if (userName != null && !userName.isEmpty() && user_pwd != null
+				&& !user_pwd.isEmpty() && mobile != null && !mobile.isEmpty()
+				&& verify != null && !verify.isEmpty()) {
+			if (userName.contains("*")) {
+				map = rspFormat("", ILLEGAL_USERNAME);
+			} else if (userName.length() >= 9 || userName.length() <= 2) {
+				map = rspFormat("", USERNAME_ERROR);
+
+			} else if (userName.matches("[0-9]+")) {
+				map = rspFormat("", USERNAME_ERROR);
+
+			} else if (user_pwd.length() <= 3 || user_pwd.length() >= 17) {
+				map = rspFormat("", PASSWORD_ERROR);
+			}
+
+			else {
+				boolean isHaven = userService.checkoutRegisterPhone(mobile);
+				if (isHaven == true) {
+					map = rspFormat("", PHONE_BOUND);
+				} else {
+					User user = new User();
+					boolean isHaven2 = userService.checkoutUsername(userName);
+					if (isHaven2 == true) {
+						map = rspFormat("", REPEAT_USERNAME);
+					} else {
+
+						user.setUserName(userName);
+						user.setPassword(user_pwd);
+						user.setPhone(mobile);
+						Integer userid = userService.getnextId();
+						userService.insertUser2(user);
+						// System.out.println(userid+"gfdgfdgdfg");
+						Object status = null;
+						
+						try {
+							map2.put("ctl", "api");
+							map2.put("act", "register");
+							map2.put("fage_id", userid.toString());
+							map2.put("mobile", mobile);
+							map2.put("user_name", userName);
+							//System.out.println(userName+"gdshiugfudivbgiusdfgbi");
+							map2.put("user_pwd", new BASE64Encoder()
+									.encode(user_pwd.getBytes()));
+							map2.put("verify", verify);
+							String time = String.valueOf(new Date().getTime())
+									.substring(0, 10);
+							map2.put("time", time);
+
+							map2.put(
+									"signature",
+									MD5Util.getDigest(SortByMap.sort(map2)
+											+ "Yx3V27g4SckNJ1Zk"));
+							// map2.put(
+							// "signature",
+							// MD5Util.string2MD5(SortByMap.sort(map2)
+							// + "Yx3V27g4SckNJ1Zk"));
+							String res = ControllerTest.sentPost(map2);
+//							 System.out.println("sadhl-------------------:"
+//							 + res);
+							status = new JSONObject(res).get("status");
+
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+						if (("0").equals(status.toString())) {
+							Integer userId = userid;
+
+							Map<String, Object> dataMap = new HashMap<String, Object>();
+							dataMap.put("userId", userId);
+							dataMap.put("userName", userName);
+
+							if (mobile != null && !mobile.isEmpty()) {
+								dataMap.put("mobile", mobile);
+							} else {
+								dataMap.put("mobile", "");
+							}
+
+							/**
+							 * 注册完直接登录了，返回获取到的新token
+							 */
+							String url2 = "http://sandbox.hscloud.cn/oauth2/oauth2/token";
+							Map<String, String> paramMap = new HashMap<String, String>();
+							paramMap.put("grant_type", "client_credentials");
+							paramMap.put("open_id", userId.toString());
+							String tokenResult = GetHSTokenUtils.sendPost(url2,
+									paramMap, GetHSTokenUtils.CHARSET,
+									GetHSTokenUtils.CHARSET, null,
+									GetHSTokenUtils.BASIC, "获取令牌");
+
+							// 新的token
+							AccessToken accesstoken = JacksonUtils.json2Object(
+									tokenResult, AccessToken.class);
+
+							Token token = new Token();
+
+							Calendar c = Calendar.getInstance();
+							c.add(Calendar.SECOND, Integer.parseInt(accesstoken
+									.getExpires_in()));
+
+							Date expiresTime = c.getTime();// 计算出过期时间
+
+							token.setExpiresTime(expiresTime);
+							token.setAccessToken(accesstoken.getAccess_token());
+							token.setTokenType(accesstoken.getToken_type());
+							token.setRefreshToken(accesstoken
+									.getRefresh_token());
+							token.setExpiresIn(accesstoken.getExpires_in());
+							token.setUserId(userId);
+
+							tokenService.insertTokenLoginOn(token);
+
+							dataMap.put("token", accesstoken.getAccess_token());
+							dataMap.put("tokenType",
+									accesstoken.getToken_type());
+							dataMap.put("expiresTime", expiresTime);
+
+							map = rspFormat(dataMap, SUCCESS);
+
+						} else {
+							TransactionAspectSupport.currentTransactionStatus()
+									.setRollbackOnly();
+							String res = ControllerTest.sentPost(map2);
+							Map<String, Object> maps = (Map<String, Object>) JSON
+									.parseObject(res);
+							for (Object map3 : maps.entrySet()) {
+								map.put(((Map.Entry) map3).getKey().toString(),
+										((Map.Entry) map3).getValue());
+							}
+							//map = rspFormat("", status);
+							// System.out.println("ghfdkjsghfdsjk");
+						}
+
+					}
+
+				}
+			}
+		} else {
+			map = rspFormat("", WRONG_PARAM);
+			// System.out.println("gsdhkjfhsdkfkdsjfksd");
+		}
+		return map;
+	}
+
+	@RequestMapping(value = "/sms", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> sms(HttpServletRequest request,
+			HttpServletResponse response) {
+
+		String phone = request.getParameter("phone");
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (phone != null && !phone.isEmpty()) {
+			boolean isHaven = userService.checkoutRegisterPhone(phone);
+			if (isHaven == true) {
+
+				map = rspFormat("", PHONE_BOUND);
+
+			} else {
+				boolean isOk = sMSandValiCodeService.sendSMS(phone, "ZC");
+				if (isOk == true) {
+					map = rspFormat("", SUCCESS);
+				} else {
+					map = rspFormat("", FAIL);
+				}
+			}
+		} else {
+			map = rspFormat("", WRONG_PARAM);
+		}
+		return map;
+		// 此处还没上线。测试成功
+		// String phone = request.getParameter("phone");
+		// Map<String, Object> map = new HashMap<String, Object>();
+		// HashMap<String, String> map2 = new HashMap<String, String>();
+		// if (phone != null && !phone.isEmpty()) {
+		// boolean isHaven = userService.checkoutRegisterPhone(phone);
+		// if (isHaven == true) {
+		// map = rspFormat("", PHONE_BOUND);
+		// } else {
+		// map2.put("ctl", "api");
+		// map2.put("act", "get_register_verify_code");
+		// map2.put("mobile", phone);
+		// String time = String.valueOf(new Date().getTime()).substring(0,10);
+		// map2.put("time", time);
+		// map2.put("signature", MD5Util.string2MD5(SortByMap.sort(map2)
+		// + "Yx3V27g4SckNJ1Zk"));
+		// Object status = null;
+		// try {
+		// res = ControllerTest.sentPost(map2);
+		//
+		// status = new JSONObject(res).get("status");
+		// } catch (Exception e) {
+		// // TODO: handle exception
+		// }
+		//
+		// if (("0").equals(status.toString())) {
+		// map = rspFormat("", SUCCESS);
+		// } else {
+		// map = rspFormat("", FAIL);
+		// }
+		// }
+		// } else {
+		// map = rspFormat("", WRONG_PARAM);
+		// }
+		// return map;
+	}
+
+	@RequestMapping(value = "/vcode", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> vcode(HttpServletRequest request,
+			HttpServletResponse response) {
+		String phone = request.getParameter("phone");
+		String randomNum = request.getParameter("randomNum");
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		if (phone != null && !phone.isEmpty() && randomNum != null
+				&& !randomNum.isEmpty()) {
+			ValidateCode validateCode = new ValidateCode();
+			validateCode.setPhone(phone);
+			validateCode.setMarker("ZC");
+			validateCode.setRandomNum(randomNum);
+			boolean isOk = sMSandValiCodeService.validataCode(validateCode);
+			if (isOk == true) {
+				map = rspFormat("", SUCCESS);
+			} else {
+				map = rspFormat("", WRONG_VALIDATE_CODE);
+			}
+		} else {
+			map = rspFormat("", WRONG_PARAM);
+		}
+
+		return map;
+	}
+
+	// 登录
+	@RequestMapping(value = "/login2", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> login(HttpServletRequest request,
+			HttpServletResponse response) {
+
+		String loginName = request.getParameter("loginName");
+		String password = request.getParameter("password");
+		try {
+			password = new String(new BASE64Decoder().decodeBuffer(password));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		if (loginName != null && !loginName.isEmpty() && password != null
+				&& !password.isEmpty()) {
+			User user = new User();
+
+			User user1 = userService.getUserByUsername(loginName, password);
+			if (user1 == null) {
+				User user2 = userService.getUserByPhone(loginName, password);
+				user = user2;
+			} else {
+				user = user1;
+			}
+
+			if (user == null) {
+				map = rspFormat("", NAME_PWD_WRONG);
+			} else {
+
+				Integer userId = user.getUserId();
+				Map<String, Object> dataMap = loginService
+						.getTokenWhenLogin(userId);
+				dataMap.put("userId", user.getUserId());
+				dataMap.put("userName", user.getUserName());
+				String phone = user.getPhone();
+				if (phone != null && !phone.isEmpty()) {
+					dataMap.put("phone", phone);
+				} else {
+					dataMap.put("phone", "");
+				}
+				
+				List<Accounts> accountList=accountsService.getAccountsByUserid(userId);
+				
+//				Accounts accounts = null;
+//				accounts = accountsService.getAccountsExist(userId);
+				if (accountList.isEmpty()) {
+					dataMap.put("accounts", "0");
+					dataMap.put("gid", "");
+					dataMap.put("YHgid", "");
+				} else {
+					dataMap.put("accounts", "1");//创建了组合
+					Integer[] a = new Integer[2];
+					for (int i = 0; i < accountList.size(); i++) {
+						a[i]=accountList.get(i).getGid();
+					}
+					String gid=a[0].toString();
+					String YHgid=a[1].toString();
+					dataMap.put("gid",gid);
+					dataMap.put("YHgid",YHgid);
+				}
+				IncomeLoss incomeloss = null;
+				incomeloss = incomeLossService.getIncomeLossExsit(userId);
+				if (incomeloss == null) {
+					dataMap.put("incomeloss", "0");
+				} else {
+					int status = incomeloss.getStatus();
+					if (status == 1) {
+						dataMap.put("incomeloss", "1");
+					} else {
+						dataMap.put("incomeloss", "0");
+					}
+
+				}
+				dataMap.put("headImage", user.getHeadImage());
+
+				// CashAccount ca = cashService.getCashAccountByUserId(userId);
+				// if (ca != null) {
+				// String pwd = ca.getPassword();
+				// if (pwd != null && !pwd.isEmpty()) {
+				// dataMap.put("cashAccountPwd", "Y");
+				// } else {
+				// dataMap.put("cashAccountPwd", "N");
+				// }
+				// } else {
+				// dataMap.put("cashAccountPwd", "N");
+				// }
+
+				map = rspFormat(dataMap, SUCCESS);
+			}
+
+		} else {
+			map = rspFormat("", WRONG_PARAM);
+		}
+
+		return map;
+	}
+
+	// 绑定手机号
+	@RequestMapping(value = "/BPsendSMS", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> BPsendSMS(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+
+		String phone = request.getParameter("phone");
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (phone != null && !phone.isEmpty()) {
+			boolean isHaven = userService.checkoutRegisterPhone(phone);
+			if (isHaven == true) {
+				map = rspFormat("", PHONE_BOUND);
+			} else {
+				boolean isOk = sMSandValiCodeService.sendSMS(phone, "BP");
+				if (isOk == true) {
+					map = rspFormat("", SUCCESS);
+				} else {
+					map = rspFormat("", FAIL);
+				}
+			}
+		} else {
+			map = rspFormat("", WRONG_PARAM);
+		}
+		return map;
+	}
+
+	@RequestMapping(value = "/BPvalidateCode", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> BPvalidateCode(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		String phone = request.getParameter("phone");
+		String randomNum = request.getParameter("randomNum");
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (phone != null && !phone.isEmpty() && randomNum != null
+				&& !randomNum.isEmpty()) {
+
+			ValidateCode validateCode = new ValidateCode();
+			validateCode.setPhone(phone);
+			validateCode.setMarker("BP");
+			validateCode.setRandomNum(randomNum);
+			boolean isOk = sMSandValiCodeService.validataCode(validateCode);
+
+			if (isOk == true) {
+				map = rspFormat("", SUCCESS);
+			} else {
+				map = rspFormat("", WRONG_VALIDATE_CODE);
+			}
+		} else {
+			map = rspFormat("", WRONG_PARAM);
+		}
+		return map;
+	}
+
+	@RequestMapping(value = "/BPupdatePhone", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> BPupdatePhone(HttpServletRequest request,
+			HttpServletResponse response) {
+		String id = request.getParameter("userId");
+		// String pwd = request.getParameter("password");
+		// String paramPwd = MD5Util.string2MD5(pwd);
+		String phone = request.getParameter("phone");
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (id != null && !id.isEmpty() && phone != null && !phone.isEmpty()) {
+			Integer userId = Integer.parseInt(id);
+			User user = userService.selectUserById(userId);
+			if (user != null) {
+				// String dbPwd = user.getPassword();
+				String dbPhone = user.getPhone();
+				if (dbPhone != null && !dbPhone.isEmpty()) {
+					map = rspFormat("", HAVEN_PHONE);
+				} else {
+					Integer insertVal = userService.insertPhone(phone, userId);
+					if (insertVal > 0) {
+						map = rspFormat("", SUCCESS);
+					} else {
+						map = rspFormat("", WRONG_MYSQL_OPERATION);
+					}
+				}
+			} else {
+				map = rspFormat("", FAIL);
+			}
+		} else {
+			map = rspFormat("", WRONG_PARAM);
+		}
+		return map;
+	}
+
+	@RequestMapping(value = "/selectFriendList2", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> selectFriendList2(HttpServletRequest request,
+			HttpServletResponse response) {
+		String userName = request.getParameter("userName");
+		String paramToken = request.getParameter("token");
+		String dbToken = tokenService.selectTokenByLoginName(userName);
+
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		User vuser = userService.selectUserByUsername(userName);
+		if (vuser != null) {
+			if (dbToken.equals(paramToken)) {
+				List<User> friendList = userService.selectFriendList(userName);
+				if (friendList.size() > 0) {
+
+					List<Object> resultFriendList = new ArrayList<Object>();
+
+					for (int i = 0; i < friendList.size(); i++) {
+						Map<String, Object> userMap = new HashMap<String, Object>();
+						User user = friendList.get(i);
+						Integer userId = user.getUserId();
+						Integer ma = userAttentionService
+								.getMyAttentionCount(userId);
+						Integer am = userAttentionService
+								.getAttentMineCount(userId);
+						Integer ms = futureService.getOwnStockCount(userId);
+						Mem mem = new Mem();
+						mem.setUserId(userId);
+						Mem resultMem = futureService.getMem(mem);
+						resultMem = futureService.getMem(mem);
+						Date date = new Date();
+						if (date.getTime() < resultMem.getExpireTime()
+								.getTime()) {
+							user.setMember(1);
+						} else {
+							user.setMember(0);
+						}
+
+						userMap.put("ma", ma);
+						userMap.put("ms", ms);
+						userMap.put("member", resultMem);
+						userMap.put("am", am);
+						userMap.put("user", user);
+
+						resultFriendList.add(userMap);
+					}
+
+					resultMap.put("status", 0);
+					resultMap.put("msg", "操作成功");
+					resultMap.put("data", resultFriendList);
+
+				} else {
+					resultMap.put("status", 0);
+					resultMap.put("msg", "操作成功，该用户没有好友");
+					resultMap.put("data", "");
+				}
+			} else {
+				resultMap.put("status", 7);
+				resultMap.put("msg", "token错误");
+				resultMap.put("data", "");
+			}
+		} else {
+			resultMap.put("status", 4);
+			resultMap.put("msg", "操作失败，不存在该用户");
+			resultMap.put("data", "");
+
+		}
+
+		return resultMap;
+	}
+
+	@RequestMapping(value = "/getsyuser", method = { RequestMethod.POST })
+	@ResponseBody
+	public Map<String, Object> getSYUser() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		String userId = userService.getSYUser();
+		Map<String, Object> datamap = new HashMap<String, Object>();
+		datamap.put("userId", userId);
+		map = rspFormat(datamap, SUCCESS);
+		return map;
+	}
+
+}

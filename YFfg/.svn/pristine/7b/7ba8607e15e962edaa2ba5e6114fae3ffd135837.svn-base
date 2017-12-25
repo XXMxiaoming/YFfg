@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.yfwl.yfgp.dao.DynContentMetaMapper" >
+
+	<resultMap type="DynContentMeta" id="BaseResultMap">
+		<id column="id" property="Id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="user_id_meta" property="userIdMeta" jdbcType="INTEGER"/>
+		<result column="meta_value" property="metaValue" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />		
+	</resultMap>
+	<insert id="insertMeta" parameterType="DynContentMeta">
+	insert into yfgp_dyn_content_meta (user_id, user_id_meta, meta_value, status)
+	values (#{userId}, #{userIdMeta}, #{metaValue}, #{status})
+	</insert>
+	
+	<update id="updateMeta" parameterType="DynContentMeta">
+	update yfgp_dyn_content_meta set meta_value = #{metaValue}, status = #{status} where user_id = #{userId} and user_id_meta = #{userIdMeta}
+	</update>
+ 	
+ 	
+ 	<select id="getMeta" parameterType="DynContentMeta" resultMap="BaseResultMap">
+ 	select * from yfgp_dyn_content_meta where user_id = #{userId} and user_id_meta = #{userIdMeta}
+ 	</select>
+	
+</mapper>	

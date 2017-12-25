@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.CollectionMapper">
+
+	<resultMap  id="BaseResultMap" type="Collect">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="c_id" property="cId" jdbcType="INTEGER" />
+		<result column="c_type" property="cType" jdbcType="INTEGER" />
+		<result column="c_title" property="cTitle" jdbcType="VARCHAR" />
+		<result column="c_time" property="cTime" jdbcType="TIMESTAMP" />
+		<result column="c_src" property="cSrc" jdbcType="VARCHAR" />
+		<result column="c_status" property="cStatus" jdbcType="INTEGER" /> 	
+	</resultMap>
+	
+	<select id="getCollection" parameterType="Integer" resultMap="BaseResultMap">
+	select * from yfgp_own_collection where user_id = #{userId}
+	</select>
+	
+	<select id="getCollect" parameterType="Collect" resultMap="BaseResultMap">
+	select * from yfgp_own_collection where user_id = #{userId} and c_id = #{cId} and c_type = #{cType}
+	</select>
+	
+	<delete id="deleteCollection" parameterType="Integer">
+	delete from yfgp_own_collection where id = #{id}
+	</delete>
+	
+	<insert id="insertCollection" parameterType="Collect">
+	insert into yfgp_own_collection (user_id, c_id, c_type, c_title, c_time, c_src, c_status)
+	values (#{userId}, #{cId}, #{cType}, #{cTitle}, #{cTime}, #{cSrc}, #{cStatus})
+	<selectKey resultType="Integer" keyProperty="id" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+	
+</mapper>

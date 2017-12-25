@@ -1,0 +1,21 @@
+package com.yfwl.yfgp.serviceImpl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.yfwl.yfgp.dao1.FuturesTraderecMapper;
+import com.yfwl.yfgp.model.FuturesTraderec;
+import com.yfwl.yfgp.service.FuturesTraderecService;
+
+@Service
+public class FuturesTraderecServiceImpl implements FuturesTraderecService {
+	@Autowired
+	FuturesTraderecMapper futuresTraderecMapper;
+
+	@Override
+	public Integer insertFuturesTraderec(FuturesTraderec futuresTraderec) {
+		// TODO Auto-generated method stub
+		return futuresTraderecMapper.insertFuturesTraderec(futuresTraderec);
+	}
+
+}

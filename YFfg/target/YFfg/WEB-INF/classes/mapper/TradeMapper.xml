@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.TradeMapper">
+
+	<resultMap  id="BaseResultMap" type="Trade">
+		<id column="trade_id" property="tradeId" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="trade_user_id" property="tradeUserId" jdbcType="INTEGER" />
+		<result column="trade_info" property="tradeInfo" jdbcType="VARCHAR" />
+		<result column="trade_type" property="tradeType" jdbcType="INTEGER" />
+		<result column="money_change" property="moneyChange" jdbcType="DECIMAL" />
+		<result column="trade_time" property="tradeTime" jdbcType="TIMESTAMP" />
+		<result column="trade_state" property="tradeState" jdbcType="INTEGER" />		
+	</resultMap>
+
+	<insert id="insertTrade" parameterType="Trade">
+	insert into trade_log (user_id, trade_user_id, trade_info, trade_type, money_change, trade_time, trade_state)
+	values (#{userId}, #{tradeUserId}, #{tradeInfo}, #{tradeType}, #{moneyChange}, #{tradeTime}, #{tradeState})
+	</insert>
+	
+	<select id="getListTrade" parameterType="Integer" resultMap="BaseResultMap">
+	select * from trade_log where user_id = #{userId} or trade_user_id = #{userId}
+	</select>
+	
+	
+</mapper>

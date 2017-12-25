@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yfwl.yfgp.dao1.FundMapper">
+	<resultMap type="Fund" id="BaseResultMap">
+		<id column="fid" property="fid" jdbcType="INTEGER" />
+		<result column="fname" property="fname" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+	</resultMap>
+
+
+	<insert id="insertFund" parameterType="Fund">
+		insert into fund (fid,fname,phone) values(#{fid},#{fname},#{phone})
+	</insert>
+
+
+	<select id="getFundByFid" parameterType="Integer" resultMap="BaseResultMap">
+		select * from fund where fid=#{fid}
+	</select>
+
+	<select id="getFundByStatus" resultMap="BaseResultMap">
+		select * from fund where status='1'
+	</select>
+	
+	<update id="setDefaultFund" parameterType="Integer">
+	update fund set status='1' where fid=#{fid}
+	</update>
+	
+	
+	<update id="setInitialFund" parameterType="Integer">
+	update fund set status='0' where fid=#{fid}
+	</update>
+</mapper>

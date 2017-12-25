@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+ 
+ <mapper namespace="com.yfwl.yfgp.dao1.FuturesTraderecMapper">
+
+	<resultMap  id="BaseResultMap" type="FuturesTraderec">
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="buysell" property="buysell" jdbcType="INTEGER" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="time" property="time" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<insert id="insertFuturesTraderec" parameterType="FuturesTraderec">
+		insert into futures_traderec(name,buysell,price,time) values (#{name},#{buysell},#{price},SYSDATE())
+	</insert>
+	
+	
+	</mapper>

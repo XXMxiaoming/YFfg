@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao.PraiseMapper">
+
+	<resultMap  id="BaseResultMap" type="Praise">
+		<id column="praise_id" property="praiseId" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="praise_content" property="praiseContent" jdbcType="INTEGER" />
+		<result column="content_type" property="contentType" jdbcType="INTEGER" />
+		<result column="praise_state" property="praiseState" jdbcType="INTEGER" />
+		<result column="praise_time" property="praiseTime" jdbcType="TIMESTAMP" />	
+	</resultMap>
+	
+	<insert id="insertPraise" parameterType="Praise">
+	insert into yfgp_praise (user_id, praise_content, content_type, praise_state, praise_time) values
+	(#{userId}, #{praiseContent}, #{contentType}, '1', #{praiseTime})
+	<selectKey resultType="Integer" keyProperty="praiseId" >  
+        select @@IDENTITY  
+    </selectKey>
+	</insert>
+
+	<delete id="deletePraise" parameterType="Praise">
+	delete from yfgp_praise where praise_id = #{praiseId} 
+	</delete>
+	
+	<select id="selectPraise" parameterType="Praise" resultMap="BaseResultMap">
+	select * from yfgp_praise where user_id = #{userId} and praise_content = #{praiseContent} and content_type = #{contentType} 
+	</select>
+	
+	<select id="selectCountPraise" parameterType="Praise" resultType="Integer">
+	select COUNT(*) from yfgp_praise where praise_content = #{praiseContent} and content_type = #{contentType}
+	</select>
+	
+</mapper>

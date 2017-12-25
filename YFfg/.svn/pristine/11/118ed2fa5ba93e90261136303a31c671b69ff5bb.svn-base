@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.yfwl.yfgp.dao.UserLogMapper" >
+
+  <resultMap id="BaseResultMap" type="UserLog" >
+  	<id column="log_id" property="logId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="device_uuid" property="deviceUuid" jdbcType="VARCHAR" />
+    <result column="log_time" property="logTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <insert id="insertUserLog">
+	INSERT INTO yfgp_user_log (
+		user_id,
+		device_uuid,
+		log_time
+	)
+	VALUES
+		(#{userId}, #{deviceUuid}, SYSDATE()) 
+  </insert>
+  
+</mapper>  

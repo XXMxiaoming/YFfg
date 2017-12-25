@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="com.yfwl.yfgp.dao1.RevenueMapper">
+
+	<resultMap  id="BaseResultMap" type="Revenue">
+		<id column="userid" property="userid" jdbcType="INTEGER" />
+		<result column="Ef" property="Ef" jdbcType="DECIMAL" />
+		<result column="Ed" property="Ed" jdbcType="DECIMAL" />
+		<result column="Es" property="Es" jdbcType="DECIMAL" />
+		<result column="Ec" property="Ec" jdbcType="DECIMAL" />
+		<result column="Er" property="Er" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<insert id="insertRevenue" parameterType="integer">
+	insert into revenue (userid) values (#{userid})
+	</insert>
+	
+	<delete id="deleteRevenue"  parameterType="integer">
+	delete from revenue where userid=#{userid}
+	</delete>
+	
+	<select id="getAllRevenue" resultMap="BaseResultMap" >
+		select * from Revenue 
+	</select>
+	
+	<update id="updateRevenue" parameterType="revenue">
+	update Revenue set Er=#{Er} where userid=#{userid}
+	</update>
+	
+	
+	<insert id="insertRevenue2" parameterType="revenue">
+	insert into revenue (Ef,Ed,Es,Ec,date) values (#{Ef},#{Ed},#{Es},#{Ec},SYSDATE())
+	</insert>
+	
+	
+	<select id="selectRevenue" parameterType="integer" resultMap="BaseResultMap" >
+		select * from Revenue where userid=#{userid}
+	</select>
+	
+	
+	<update id="updateRevenue2" parameterType="revenue">
+	update Revenue set Ef=#{Ef},Es=#{Es},Ec=#{Ec},Ed=#{Ed} where userid=#{userid}
+	</update>
+	
+	
+	
+	<select id="selectRevenue2"  resultMap="BaseResultMap" >
+		select   *   from   revenue   order   by   date   desc   limit   1 
+	</select>
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.yfwl.yfgp.dao.DynContentPhotoMapper" >
+
+	<resultMap type="DynContentPhoto" id="photoResultMap">
+		<id column="photo_id" property="photoId"/>
+		<result column="con_id" property="conId"/>
+		<result column="photo_address" property="photoAddress"/>		
+	</resultMap>
+	
+ 	<insert id="onlyWordAdd2DynPhoto" useGeneratedKeys="true" keyProperty="photoId" parameterType="DynContentPhoto" >
+  		INSERT INTO yfgp_dyn_content_photo (con_id) VALUES(#{conId})
+  	</insert>	
+	
+	<insert id="insertPhotoAddress" parameterType="DynContentPhoto">
+		INSERT INTO yfgp_dyn_content_photo (con_id,photo_address) VALUES(#{conId},#{photoAddress})
+	</insert>
+	
+	
+	<select id="selectDynContentPhoto" resultMap="photoResultMap">
+		SELECT * FROM yfgp_dyn_content_photo WHERE con_id = #{conId}
+	</select>
+	
+</mapper>	

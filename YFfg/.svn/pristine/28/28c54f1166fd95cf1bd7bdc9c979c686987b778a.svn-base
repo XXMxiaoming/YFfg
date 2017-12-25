@@ -1,0 +1,8 @@
+package com.yfwl.yfgp.dao1;
+
+import com.yfwl.yfgp.model.FuturesTraderec;
+
+public interface FuturesTraderecMapper {
+	
+	public Integer insertFuturesTraderec(FuturesTraderec futuresTraderec);
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yfwl.yfgp.dao.VideoMapper">
+	<!-- 根据自己id获取所有好友id -->
+	<select id="getUserIdList" resultType="Integer">
+	SELECT 
+		user_id
+	FROM 
+		yfgp_live_user
+	</select>
+
+</mapper>

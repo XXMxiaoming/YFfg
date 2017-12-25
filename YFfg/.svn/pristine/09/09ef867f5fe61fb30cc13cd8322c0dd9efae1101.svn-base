@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.yfwl.yfgp.dao.UserMapper" >
+
+  <resultMap id="BaseResultMap" type="User" > 
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="CHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="easemob_id" property="easemobId" jdbcType="VARCHAR" />
+    <result column="easemob_password" property="easemobPassword" jdbcType="VARCHAR"/>
+    <result column="head_image" property="headImage" jdbcType="VARCHAR"/>
+    <result column="user_sex" property="userSex" jdbcType="INTEGER" />
+    <result column="user_level" property="userLevel" jdbcType="INTEGER" />
+    <result column="user_status" property="userStatus" jdbcType="INTEGER" />
+    <result column="user_title" property="userTitle" jdbcType="VARCHAR"/>
+    <result column="user_brief" property="userBrief" jdbcType="VARCHAR"/>
+    <result column="tz_type" property="tzType" jdbcType="VARCHAR"/>
+    <result column="regist_time" property="registTime" jdbcType="TIMESTAMP"/>
+    <result column="stimes" property="stimes" jdbcType="INTEGER" />
+    <result column="ltimes" property="ltimes" jdbcType="INTEGER" />
+    <result column="pathway" property="pathway" jdbcType="VARCHAR"/>
+  </resultMap>
+  
+  <!-- 查找user表中有没有该注册手机号码 -->
+  <select id="checkoutRegisterPhone" parameterType="String" resultType="Integer">
+  	SELECT COUNT(phone) FROM yfgp_user WHERE phone = #{phone}
+  </select>
+  
+  <!-- 新增一个用户 -->
+  <insert id="insertUser" useGeneratedKeys="true" keyProperty="userId" parameterType="User">
+	INSERT INTO yfgp_user (
+		user_name,
+		password,
+		phone,		
+		easemob_id,
+		easemob_password,
+		regist_time,
+		pathway
+	)
+	VALUES
+		(
+			#{userName},
+			MD5(#{password}),
+			#{phone},
+			#{easemobId},
+			#{easemobPassword},
+			SYSDATE(),
+			#{pathway}
+		)  	
+  </insert>
+  
+  <!-- 查找user表有没有相同的用户名 -->
+  <select id="checkoutUsername" parameterType="String" resultType="Integer">
+	SELECT
+		COUNT(*)
+	FROM
+		yfgp_user
+	WHERE
+		user_name = #{userName}  	
+  </select>
+  
+  <!-- 查询所有真实用户的easemobid -->
+  <select id="selectUserEasemodId" parameterType="Integer" resultType="String">
+	SELECT
+		easemob_id
+	FROM
+		yfgp_user
+	WHERE
+		user_status != 2
+	AND user_status != 4
+	AND easemob_id IS NOT NULL
+	LIMIT #{pageCount},100 	
+  </select>
+  
+  <!-- 统计所有真实用户的总数 -->
+   <select id="getUserCount" resultType="Integer">
+	SELECT
+		COUNT(easemob_id) AS total
+	FROM
+		yfgp_user
+	WHERE
+		user_status != 2
+	AND user_status != 4
+	AND	easemob_id IS NOT NULL
+  </select>
+  
+  <!-- 更新用户信息 -->
+  <update id="updateUserInfo" parameterType="User">
+	UPDATE yfgp_user SET 
+	 	user_name = #{userName}
+	WHERE
+		user_id = #{userId}  	
+  </update>
+  
+  <!-- 更新用户性别信息 -->
+  <update id="updateUserSexInfo" parameterType="User">
+	UPDATE yfgp_user SET 
+	 	user_sex = #{userSex}
+	WHERE
+		user_id = #{userId}  	
+  </update>
+  
+  <!-- 检验手机号 -->
+  <select id="validateLonginName" parameterType="String" resultType="Integer">
+	SELECT
+		COUNT(*)
+	FROM
+		yfgp_user
+	WHERE
+		phone = #{loginName}  	
+  </select>
+  
+  <!-- 校验密码 -->
+  <select id="validatePassword" resultType="Integer">
+	SELECT
+		COUNT(*)
+	FROM
+		yfgp_user
+	WHERE
+		phone = #{phone}
+	AND `password` = MD5(#{password}) 	
+  </select>
+  
+  <!-- 根据登录手机号查找user -->
+  <select id="selectUserByLoginName" parameterType="String" resultMap="BaseResultMap">
+	SELECT
+		user_id,
+		user_name,
+		easemob_id,
+		easemob_password,
+		head_image,
+		user_sex,
+		user_level,
+		user_status
+	FROM
+		yfgp_user
+	WHERE
+		phone = #{loginName}   
+  </select>
+  <select id="selectUserByUsername" parameterType="String" resultMap="BaseResultMap">
+  	SELECT
+		user_id,
+		user_name,
+		easemob_id,
+		easemob_password,
+		head_image,
+		user_sex,
+		user_level,
+		user_status
+	FROM
+		yfgp_user
+	WHERE
+		user_name = #{userName}
+  </select>
+  
+  
+  <!--根据userId查找user -->
+  <select id="selectUserById" parameterType="Integer" resultMap="BaseResultMap">
+	SELECT
+		*
+	FROM
+		yfgp_user
+	WHERE
+		user_id = #{userId}  
+  </select>
+  
+  <!-- 根据环信ID查找User -->
+  <select id="selectUsernameByeasemobId" parameterType="String" resultMap="BaseResultMap">
+	SELECT
+		*
+	FROM
+		yfgp_user
+	WHERE
+		easemob_id = #{easemobId}
+  </select>
+  
+  <!-- 更改密码 -->
+  <update id="updatePassword" parameterType="String">
+	UPDATE yfgp_user
+	SET `password` = MD5(#{password})
+	WHERE
+		phone = #{phone}  
+  </update>
+  
+  <!-- 查看好友列表 -->
+  <select id="selectFriendList" parameterType="String" resultMap="BaseResultMap">
+	SELECT
+		user_id,
+		user_name,
+		easemob_id,
+		head_image,
+		user_sex,
+		user_level,
+		user_status
+	FROM
+		yfgp_user
+	WHERE
+		user_id IN (
+			SELECT
+				friend_id
+			FROM
+				yfgp_friend_relation
+			WHERE
+				user_id = (
+					SELECT
+						user_id
+					FROM
+						yfgp_user
+					WHERE
+						user_name = #{loginName}
+				)
+			AND is_disabled = 'N'
+		)	
+  </select>
+    <select id="selectFriendList2" parameterType="String" resultMap="BaseResultMap">
+	SELECT
+		*
+	FROM
+		yfgp_user
+	WHERE
+		user_id IN (
+			SELECT
+				friend_id
+			FROM
+				yfgp_friend_relation
+			WHERE
+				user_id = (
+					SELECT
+						user_id
+					FROM
+						yfgp_user
+					WHERE
+						user_name = #{loginName}
+					AND is_disabled = 'N'
+				)
+		)	
+  </select>
+  
+  <!-- 查找用户（模糊查询） -->
+  <select id="selectUserByLike" statementType="STATEMENT" resultMap="BaseResultMap">
+	SELECT
+		*
+	FROM 
+		yfgp_user
+	WHERE
+		user_name LIKE '%${searchName}%'
+	OR phone LIKE '%${searchName}%'
+	LIMIT ${pageCount},10
+  </select>
+  
+  <!-- 更新头像 -->
+  <update id="updatHeadImage" parameterType="String">
+	UPDATE yfgp_user
+	SET head_image = #{headImage}
+	WHERE
+		user_id = #{userId}  
+  </update>
+  
+  <!-- 通过第三方账号查询user -->
+  <select id="selectUserByThirdID" parameterType="String" resultMap="BaseResultMap">
+	SELECT
+		*
+	FROM
+		yfgp_user
+	WHERE
+		user_id = (
+			SELECT
+				user_id
+			FROM
+				yfgp_thirdaccount_connect
+			WHERE
+				thirdaccount_id = #{thirdAccountId}
+		)  
+  </select>
+  
+  <!-- 第三方登录时新注册一个用户 -->
+  <insert id="insertUserWhenDSFDL" useGeneratedKeys="true" keyProperty="userId" parameterType="User">
+	INSERT INTO yfgp_user (
+		phone,
+		user_name,		
+		easemob_id,
+		easemob_password,
+		head_image,
+		regist_time,
+		pathway
+	)
+	VALUES
+		(
+			#{phone},
+			#{userName},
+			#{easemobId},
+			#{easemobPassword},
+			#{headImage},
+			SYSDATE(),
+			#{pathway}
+		)  	
+  </insert>
+  <!-- 第三方登录时更新用户名-->
+  <update id="updateUsernameWhenDSFDL" parameterType="String">
+	UPDATE yfgp_user
+	SET user_name = #{userName}
+	WHERE
+		phone = #{phone}  
+  </update>
+  
+  <update id="updatePasswordGeneral">
+	UPDATE yfgp_user
+	SET password = MD5(#{password})
+	WHERE
+		user_id = #{userId}  
+  </update>
+  
+  <select id="selectUserSuper" parameterType="User" resultMap="BaseResultMap">
+  select * from yfgp_user
+  where user_id = #{userId} OR user_name = #{userName} OR phone = #{phone} OR easemob_id = #{easemobId} limit 1;
+  </select>
+  
+  <update id="updateUserSuper" parameterType="User">
+  update yfgp_user 
+  set password = #{password}, user_sex = #{userSex}, 
+  user_level = #{userLevel}, user_status = #{userStatus},
+  user_title = #{userTitle}, user_brief = #{userBrief},
+  stimes=#{stimes},ltimes=#{ltimes}
+  where user_id = #{userId}
+  </update>
+  
+  <select id="getVUserList" resultMap="BaseResultMap">
+	SELECT
+		*
+	FROM
+		(SELECT
+		*
+	FROM
+		yfgp_user
+	WHERE
+		(
+			user_status = '2'
+			OR user_status = '3'
+		)
+	AND user_id NOT IN (
+		SELECT
+			att_user_id
+		FROM
+			yfgp_user_attention
+		WHERE
+			user_id = #{userId}
+		AND is_disabled = 'Y'
+	)) AS t1
+	JOIN (
+		SELECT
+			ROUND(
+				RAND() * (
+					(
+						SELECT
+							MAX(user_id)
+						FROM
+							yfgp_user
+						WHERE
+							(
+								user_status = '2'
+								OR user_status = '3'
+							)
+						AND user_id NOT IN (
+							SELECT
+								att_user_id
+							FROM
+								yfgp_user_attention
+							WHERE
+								user_id = #{userId}
+							AND is_disabled = 'Y'
+						)
+					) - (
+						SELECT
+							MIN(user_id)
+						FROM
+							yfgp_user
+						WHERE
+							(
+								user_status = '2'
+								OR user_status = '3'
+							)
+						AND user_id NOT IN (
+							SELECT
+								att_user_id
+							FROM
+								yfgp_user_attention
+							WHERE
+								user_id = #{userId}
+							AND is_disabled = 'Y'
+						)
+					)
+				) + (
+					SELECT
+						MIN(user_id)
+					FROM
+						yfgp_user
+					WHERE
+						(
+							user_status = '2'
+							OR user_status = '3'
+						)
+					AND user_id NOT IN (
+						SELECT
+							att_user_id
+						FROM
+							yfgp_user_attention
+						WHERE
+							user_id = #{userId}
+						AND is_disabled = 'Y'
+					)
+				)
+			) AS user_id
+	) AS t2
+	WHERE
+		t1.user_id >= t2.user_id
+	ORDER BY
+		t1.user_id
+	LIMIT 1
+  </select>
+  
+  <update id="updateTZtype" >
+	UPDATE yfgp_user
+	SET tz_type = #{tzType}
+	WHERE
+		user_id = #{userId}
+  </update>
+ 
+  
+  <!-- 改版登录注册 -->
+  <select id="getUserByUsername" resultMap="BaseResultMap">
+	SELECT
+		*
+	FROM
+		yfgp_user
+	WHERE
+		user_name = #{loginName}
+	AND password =MD5(#{password})
+  </select>
+  <select id="getUserByPhone" resultMap="BaseResultMap">
+	SELECT
+		*
+	FROM
+		yfgp_user
+	WHERE
+		phone = #{loginName}
+	AND password =MD5(#{password})
+  </select>
+  
+  <!-- 绑定手机号 -->
+  <insert id="insertPhone">
+	UPDATE yfgp_user
+	SET phone = #{phone}
+	WHERE
+		user_id = #{userId} 
+  </insert>
+  
+  
+  <select id="getAllVUserList" resultMap="BaseResultMap">
+  	SELECT * 
+	FROM `yfgp_user` AS t1 JOIN (SELECT ROUND(RAND() * ((SELECT MAX(user_id) FROM `yfgp_user` where user_status = '2' or user_status = '3')-(SELECT MIN(user_id) FROM `yfgp_user` where user_status = '2' or user_status = '3'))+(SELECT MIN(user_id) FROM `yfgp_user` where user_status = '2' or user_status = '3')) AS user_id) AS t2 
+	WHERE t1.user_id >= t2.user_id AND (t1.user_status = '2' OR t1.user_status = '3')
+	ORDER BY t1.user_id LIMIT #{limit}
+  </select>
+  
+  <select id="selectRandSysUseList" resultMap="BaseResultMap">
+  select * from yfgp_user where user_status='4' limit #{start},#{limit};
+  </select>
+  
+  <select id="selectRandHighSysUseList" resultMap="BaseResultMap">
+  select * from yfgp_user where user_status='4' and user_id >'32472' and '32573' > user_id limit #{start},#{limit};
+  </select>
+  
+  <select id="getStockAttUser" parameterType="String" resultType="String">
+	SELECT
+		easemob_id
+	FROM
+		yfgp_user
+	WHERE
+		user_id IN (
+			SELECT DISTINCT
+				(user_id)
+			FROM
+				yfgp_own_stock
+			WHERE
+				SUBSTRING_INDEX(stock_code, '.', 1) = #{stockCode}
+		)  
+  </select>
+  
+  <select id="getSYUser" resultType="String">
+	SELECT info_content_id FROM yfgp_home WHERE info_type = 7 LIMIT 1  
+  </select>
+  
+  <!-- 获取某条数据是在这个表的第几行  -->
+  <select id="getLocation" parameterType="User" resultType="Integer">
+	SELECT
+		A.newid
+	FROM
+		(
+			SELECT
+				(@mytemp :=@mytemp + 1) AS newid,
+				T.user_id,
+				T.user_name
+			FROM
+				(
+					SELECT
+						*,@mytemp := 0 mytemp
+					FROM
+						yfgp_user
+					WHERE
+						(
+							user_status = '2'
+							OR user_status = '3'
+						)
+					AND user_id NOT IN (
+						SELECT
+							att_user_id
+						FROM
+							yfgp_user_attention
+						WHERE
+							user_id = #{userId}
+						AND is_disabled = 'Y'
+					)
+				) AS T
+		) AS A
+	WHERE
+		A.user_id = #{amCount};
+  </select>
+  
+  <!--  获取表中第n到n+3条记录 -->
+ <select id="getLimitVUser" parameterType="User" resultMap="BaseResultMap">
+ 	SELECT
+		*
+	FROM
+		yfgp_user
+	WHERE
+		(
+			user_status = '2'
+			OR user_status = '3'
+		)
+	AND user_id NOT IN (
+		SELECT
+			att_user_id
+		FROM
+			yfgp_user_attention
+		WHERE
+			user_id = #{userId}
+		AND is_disabled = 'Y'
+	)
+	LIMIT #{amCount},
+	 #{attent}
+ </select>
+ 
+ <!-- 获取表中总记录条数 -->
+  <select id="getTotalCountRecode" parameterType="Integer" resultType="Integer">
+  	SELECT
+		count(*)
+	FROM
+		yfgp_user
+	WHERE
+		(
+			user_status = '2'
+			OR user_status = '3'
+		)
+	AND user_id NOT IN (
+		SELECT
+			att_user_id
+		FROM
+			yfgp_user_attention
+		WHERE
+			user_id = #{userId}
+		AND is_disabled = 'Y'
+	)
+  </select>
+  
+  <select id="getXNuserid" resultType="Integer">
+	SELECT
+		user_id
+	FROM
+		yfgp_user
+	WHERE
+		user_status = 2
+	OR user_status = 4 
+	LIMIT #{start},#{end}
+  </select>
+  
+  
+   <insert id="insertUser2"  parameterType="User">
+	INSERT INTO yfgp_user (
+		user_name,
+		password,
+		phone,		
+	
+	)
+	VALUES
+		(
+			#{userName},
+			MD5(#{password}),
+			#{phone},
+
+		)  	
+		<selectKey resultType="Integer" keyProperty="user_id" >  
+        select @@IDENTITY  
+    </selectKey>
+  </insert>
+  
+  <select id="selectUserByIdPwd" parameterType="User" resultMap="BaseResultMap">
+  	SELECT
+		*
+	FROM
+		yfgp_user
+	WHERE
+		user_id = #{userId}
+	AND password =MD5(#{password})
+	</select>
+	
+	
+	<select id="getmaiId" resultType="Integer">
+  	select max(user_id) from yfgp_user
+	</select>
+	
+	<select id="getnextId" resultType="Integer">
+  SELECT Auto_increment FROM information_schema.`TABLES` WHERE  table_name = 'yfgp_user' limit 1;
+	</select>
+	
+	
+
+</mapper>

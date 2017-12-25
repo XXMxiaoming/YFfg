@@ -1,0 +1,59 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class AccountControllerTest extends ControllerTest{
+	
+	@Test
+	public void test1(){
+		String url = host+"account/initaccount.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "1314");
+		map.put("password", "lynn520");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test2(){
+		String url = host+"account/getaccount.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "1314");
+		map.put("password", "lynn520");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test3(){
+		String url = host+"account/consume.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("accountId", "10000");
+		map.put("tradeInfo", "lynn520");
+		map.put("tradeType", "0");
+		map.put("moneyChange", "-400");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test4(){
+		String url = host+"account/gettradelist.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("accountId", "10000");
+		
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test5(){
+		String url = host+"account/changepassword.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("accountId", "10000");
+		map.put("password", "123456");
+		System.out.println(doPost(url, map));
+	}
+	
+	
+}

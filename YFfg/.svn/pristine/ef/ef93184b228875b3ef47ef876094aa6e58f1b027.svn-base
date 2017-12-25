@@ -1,0 +1,113 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class UserControllerTest2 extends ControllerTest{
+		
+	@Test
+	public void test1(){
+		String url = host+"user2/BPsendSMS.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("phone", "18129948342");
+		System.out.println(doPost(url, map));
+	}
+	@Test
+	public void test2(){
+		String url = host+"user2/BPvalidateCode.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("phone", "18129948342");
+		map.put("randomNum", "1297");
+		System.out.println(doPost(url, map));
+	}
+	@Test
+	public void test8(){
+		String url = host+"user2/BPupdatePhone.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10123");
+		map.put("password", "111111");
+		map.put("phone", "18129948342");
+		System.out.println(doPost(url, map));
+	}
+	
+	
+	
+	@Test
+	public void test3(){
+		String url = host+"user2/login2.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("loginName", "王磊磊");
+		map.put("password", "123456");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test4(){
+		String url = host+"user2/insertUser2.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userName", "测试一下0907");
+		map.put("password", "111111");
+		map.put("phone", "0907");
+		//map.put("", "");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test5(){
+		String url = host+"user2/selectFriendList2.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userName", "唐朝");
+		map.put("token", "4B7C1A9BBA78457DA2D5B86C2448397E2016032614403222086133");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test6(){
+		String url = host+"user2/sms.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("phone", "18129948342");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test7(){
+		String url = host+"user2/vcode.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("phone", "18129948342");
+		map.put("randomNum", "77273");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test9(){
+		String url = host+"user2/checkOldPwd.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10021");
+		map.put("oldPwd", "111111");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test10(){
+		String url = host+"user2/changePwd.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10021");
+		map.put("password", "111111");
+		map.put("token", "99221FD83C964DC8A5E4FE38121967022016041117383763695102");
+		System.out.println(doPost(url, map));
+	}
+	
+	@Test
+	public void test11(){
+		String url = host+"user2/updatePwd.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("userId", "10021");
+		map.put("oldPwd", "123456");
+		map.put("password", "111111");
+		map.put("token", "282D146FA29C4C78810CBBEC03DD7D502016041211062101141755");
+		System.out.println(doPost(url, map));
+	}
+}

@@ -1,0 +1,29 @@
+package com.yfwl.yfgp.controllertest;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+
+import com.yfwl.yfgp.posttestutils.ControllerTest;
+
+public class HomeArticleControllerTest extends ControllerTest{
+	
+	@Test
+	public void test1() {
+		String url = host+"homeArticle/getHomeArticle.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("", "");
+		System.out.println(doPost(url, map));
+		
+	}
+	
+	@Test
+	public void test2() {
+		String url = host+"homeArticle/updateScanCount.do";
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("homeId", "15");
+		System.out.println(doPost(url, map));
+		
+	}
+	
+}
